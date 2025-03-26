@@ -11,3 +11,7 @@ It’s a great starting point for anyone who wants to restore this helpful custo
 ⚠️ Note
 This is an early version and may not be perfect yet – but it’s a solid foundation to build on. Contributions and feedback are always welcome!
 
+Installation: Please set a Shopping Experience in the basicInformation of shopware and select a the contact page there. Otherwise our plugin will not know where the contact form is. 
+Support: <a href="https://www.webdesignhamburg.net">WebdesignHamburg Shopware</a>
+
+
