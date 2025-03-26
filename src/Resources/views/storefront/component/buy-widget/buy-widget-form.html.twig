@@ -1,0 +1,25 @@
+{% sw_extends '@Storefront/storefront/component/buy-widget/buy-widget-form.html.twig' %}
+
+{% block buy_widget_buy_container %}
+    {{ parent() }}
+
+    {% set dasformShow = config('SvenDasForm.config.show') %}
+    {% if dasformShow %}
+        
+                <div style="height:10px" data-dasform-contact-inject></div>
+
+                {% set modalUrl = path('frontend.cms.page', {
+                    id: config('core.basicInformation.contactPage'),
+                    productName: page.product.translated.name,
+                    productId: page.product.id
+                }) %}
+
+                <a href="{{ modalUrl }}"
+                   data-ajax-modal="true"
+                   data-url="{{ modalUrl }}"
+                   class="btn btn-primary btn-buy produktanfrage">
+                    Produktanfrage
+                </a>
+          
+    {% endif %}
+{% endblock %}

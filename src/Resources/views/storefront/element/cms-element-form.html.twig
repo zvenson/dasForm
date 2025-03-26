@@ -1,0 +1,11 @@
+{% sw_extends '@Storefront/storefront/element/cms-element-form.html.twig' %}
+
+{% block cms_element_form %}
+    {% if app.request.get('productName') is not empty %}
+        {% set data = data|merge({
+            'comment': 'Ich interessiere mich für: ' ~ app.request.get('productName') ~ ' (ID: ' ~ app.request.get('productId') ~ ')'
+        }) %}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}

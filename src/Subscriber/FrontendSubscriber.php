@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Sven\DasForm\Subscriber;
+
+use Shopware\Storefront\Event\StorefrontRenderEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Shopware\Core\System\SystemConfig\SystemConfigService;
+
+class FrontendSubscriber implements EventSubscriberInterface
+{
+    private SystemConfigService $systemConfigService;
+
+    public function __construct(SystemConfigService $systemConfigService)
+    {
+        $this->systemConfigService = $systemConfigService;
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            StorefrontRenderEvent::class => 'onStorefrontRender'
+        ];
+    }
+
+    public function onStorefrontRender(StorefrontRenderEvent $event): void
+    {
+        $salesChannelId = $event->getSalesChannelContext()->getSalesChannelId();
+
+        // Fetch the correct settings from the plugin config
+        $cookieOverlayActive = (bool) $this->systemConfigService->get(
+            'SvenDasForm.config.show', 
+            $salesChannelId
+        );
+
+              // Set the variables separately
+        $event->setParameter('DasForm', $cookieOverlayActive);
+
+    }
+}

@@ -1,0 +1,46 @@
+{
+    "name": "sven/dasform",
+    "description": "DAS Form",
+    "version": "v1.0.0",
+    "type": "shopware-platform-plugin",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "WebdesignHamburg.net"
+        }
+    ],
+    "require": {
+         "shopware/core": "6.6.*", 
+    "shopware/administration": "6.6.*", 
+    "shopware/storefront": "6.6.*" 
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-master",
+        "phpunit/phpunit": "^7.1"
+    },
+    "extra": {
+        "shopware-plugin-class": "Sven\\DasForm\\SvenDasForm",
+        "copyright": "(c) by WebdesignHamburg.net",
+        "label": {
+            "de-DE": "das Form",
+            "en-GB": "das Form"
+        },
+        "description": {
+            "de-DE": "das Form",
+            "en-GB": "das Form"
+        },
+        "manufacturerLink": {
+            "en-GB": "https://webdesignhamburg.net",
+            "de-DE": "https://webdesignhamburg.net"
+        },
+        "supportLink": {
+            "de-DE": "https://webdesignhamburg.net",
+            "en-GB": "https://webdesignhamburg.net"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Sven\\DasForm\\": "src/"
+        }
+    }
+}
