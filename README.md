@@ -1,18 +1,13 @@
-# genericSWJSPlugin
-Shopware 6
-You can add your JS Code to this file: 
-/src/Resources/app/storefront/src/design-burgs-plugin/design-burgs-plugin.js
+🛠️ DAS Form – Product Inquiry Button for Shopware 6
+This Shopware 6 plugin adds a “Product Inquiry” button beneath the Add to Cart button on the product detail page.
 
-Install and activate the plugin by uploading content of master.zip to the folder 
-/custom/plugins/DesignBurgsJavaScript and do
+When clicked, it opens a modal window containing a contact form that allows customers to ask questions about the product.
+The subject and message fields in the form are automatically pre-filled with the product name to save your customers time and encourage interaction.
 
-php bin/console plugin:refresh
-php bin/console plugin:install --activate DesignBurgsJavaScript
+💡 Why this plugin?
+This feature was widely loved in Shopware 5 – and now it’s making a comeback in Shopware 6.
+It’s a great starting point for anyone who wants to restore this helpful customer interaction feature – and it’s 100% free.
 
-Afterwards you need to 
-/bin/build-storefront.sh
-php bin/console cache:clear
-php bin/console theme:compile
-
-make sure you have node.js, npm installed on your server.
+⚠️ Note
+This is an early version and may not be perfect yet – but it’s a solid foundation to build on. Contributions and feedback are always welcome!
 
