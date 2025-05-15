@@ -2,9 +2,9 @@
 
 {% block buy_widget_buy_container %}
     {{ parent() }}
-
-    {% set dasformShow = config('SvenDasForm.config.show') %}
-    {% if dasformShow %}
+        {% block buy_widget_inquiry_form %}
+            {% set dasformShow = config('SvenDasForm.config.show') %}
+            {% if dasformShow %}
         
                 <div style="height:10px" data-dasform-contact-inject></div>
 
@@ -20,6 +20,6 @@
                    class="btn btn-primary btn-buy produktanfrage">
                     Produktanfrage
                 </a>
-          
-    {% endif %}
+            {% endif %}
+        {% endblock %}
 {% endblock %}
