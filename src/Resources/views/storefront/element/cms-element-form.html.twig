@@ -1,10 +1,24 @@
 {% sw_extends '@Storefront/storefront/element/cms-element-form.html.twig' %}
 
 {% block cms_element_form %}
-    {% if app.request.get('productName') is not empty %}
-        {% set data = data|merge({
-            'comment': 'Ich interessiere mich für: ' ~ app.request.get('productName') ~ ' (ID: ' ~ app.request.get('productId') ~ ')'
-        }) %}
+    {% set dasformProductName = app.request.get('productName') %}
+    {% set dasformInquiryText = app.request.get('inquiryText')|default('')|trim %}
+    {% set dasformInquirySubject = app.request.get('inquirySubject')|default('')|trim %}
+
+    {% if dasformProductName is not empty %}
+        {% set dasformComment = 'Ich interessiere mich für: ' ~ dasformProductName ~ ' (ID: ' ~ app.request.get('productId') ~ ')' %}
+
+        {% if dasformInquiryText is not empty %}
+            {% set dasformComment = dasformComment ~ "\n\n" ~ dasformInquiryText %}
+        {% endif %}
+
+        {% set dasformMerge = { 'comment': dasformComment } %}
+
+        {% if dasformInquirySubject is not empty %}
+            {% set dasformMerge = dasformMerge|merge({ 'subject': dasformInquirySubject }) %}
+        {% endif %}
+
+        {% set data = data|merge(dasformMerge) %}
     {% endif %}
 
     {{ parent() }}
