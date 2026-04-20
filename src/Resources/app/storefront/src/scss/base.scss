@@ -1,0 +1,16 @@
+.btn.produktanfrage {
+    display: block;
+    width: 100%;
+    border-radius: 0;
+    background-color: $sw-color-info;
+    border-color: $sw-color-info;
+    color: $white;
+
+    &:hover,
+    &:focus,
+    &:active {
+        background-color: darken($sw-color-info, 8%);
+        border-color: darken($sw-color-info, 8%);
+        color: $white;
+    }
+}

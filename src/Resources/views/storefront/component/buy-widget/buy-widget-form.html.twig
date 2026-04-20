@@ -3,22 +3,29 @@
 {% block buy_widget_buy_container %}
     {{ parent() }}
         {% block buy_widget_inquiry_form %}
-            {% set dasformShow = config('SvenDasForm.config.show') %}
-            {% if dasformShow %}
-        
+            {% set dasformMaster = config('SvenDasForm.config.show') %}
+            {% set dasformProductActive = page.product.translated.customFields.sven_dasform_active ?? false %}
+
+            {% if dasformMaster and dasformProductActive %}
+                {% set dasformButtonText = page.product.translated.customFields.sven_dasform_button_text|default('')|trim %}
+                {% set dasformSubject = page.product.translated.customFields.sven_dasform_subject|default('')|trim %}
+                {% set dasformLabel = dasformButtonText is not empty ? dasformButtonText : 'Produktanfrage' %}
+
                 <div style="height:10px" data-dasform-contact-inject></div>
 
                 {% set modalUrl = path('frontend.cms.page', {
                     id: config('core.basicInformation.contactPage'),
                     productName: page.product.translated.name,
-                    productId: page.product.id
+                    productId: page.product.id,
+                    inquiryText: dasformButtonText,
+                    inquirySubject: dasformSubject
                 }) %}
 
                 <a href="{{ modalUrl }}"
                    data-ajax-modal="true"
                    data-url="{{ modalUrl }}"
-                   class="btn btn-primary btn-buy produktanfrage">
-                    Produktanfrage
+                   class="btn btn-primary btn-buy produktanfrage w-100">
+                    {{ dasformLabel }}
                 </a>
             {% endif %}
         {% endblock %}

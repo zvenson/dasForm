@@ -11,12 +11,15 @@ export default class DasFormContactInject extends Plugin {
         document.querySelectorAll('[data-ajax-modal]').forEach(link => {
             link.addEventListener('click', () => {
                 const url = new URL(link.getAttribute('data-url'), window.location.origin);
-                const productName = url.searchParams.get('productName');
-                const productId = url.searchParams.get('productId');
+                const productName = url.searchParams.get('productName') || '';
+                const productId = url.searchParams.get('productId') || '';
+                const inquiryText = url.searchParams.get('inquiryText') || '';
+                const inquirySubject = url.searchParams.get('inquirySubject') || '';
 
-                // 💾 Save to localStorage
                 localStorage.setItem('dasform_productName', productName);
                 localStorage.setItem('dasform_productId', productId);
+                localStorage.setItem('dasform_inquiryText', inquiryText);
+                localStorage.setItem('dasform_inquirySubject', inquirySubject);
 
                 console.log('[DasForm] Stored product data in localStorage');
             });
@@ -27,35 +30,40 @@ export default class DasFormContactInject extends Plugin {
         const interval = setInterval(() => {
             const subjectInput = document.getElementById('form-subject');
             const commentInput = document.getElementById('form-comment');
-    
-            const productName = localStorage.getItem('dasform_productName');
-            const productId = localStorage.getItem('dasform_productId');
-    
-            if (productName && subjectInput && !subjectInput.value) {
-                subjectInput.value = `Anfrage zum Produkt: ${productName}`;
+
+            const productName = localStorage.getItem('dasform_productName') || '';
+            const inquiryText = localStorage.getItem('dasform_inquiryText') || '';
+            const inquirySubject = localStorage.getItem('dasform_inquirySubject') || '';
+
+            if (!productName) {
+                return;
             }
-    
-            if (productName && commentInput && !commentInput.value) {
-                commentInput.value = `Ich interessiere mich für Ihren Artikel ${productName} und bitte um Kontaktaufnahme.`;
+
+            if (subjectInput && !subjectInput.value) {
+                subjectInput.value = inquirySubject
+                    ? inquirySubject
+                    : `Anfrage zum Produkt: ${productName}`;
             }
-    
-            // If both are filled, stop polling
-            if (
-                productName &&
-                subjectInput?.value &&
-                commentInput?.value
-            ) {
+
+            if (commentInput && !commentInput.value) {
+                const baseComment = `Ich interessiere mich für Ihren Artikel ${productName} und bitte um Kontaktaufnahme.`;
+                commentInput.value = inquiryText
+                    ? `${baseComment}\n\n${inquiryText}`
+                    : baseComment;
+            }
+
+            if (subjectInput?.value && commentInput?.value) {
                 console.log('[DasForm] Subject and comment prefilled ✅');
-    
+
                 localStorage.removeItem('dasform_productName');
                 localStorage.removeItem('dasform_productId');
-    
+                localStorage.removeItem('dasform_inquiryText');
+                localStorage.removeItem('dasform_inquirySubject');
+
                 clearInterval(interval);
             }
         }, 300);
-    
+
         setTimeout(() => clearInterval(interval), 10000);
     }
-    
-    
 }
