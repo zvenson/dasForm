@@ -10,6 +10,14 @@
 			<label lang="de-DE">Das Form einschalten</label>
 			<label>Switch on Das Form</label>
 			<defaultValue>1</defaultValue>
-		</input-field>		
+		</input-field>
+		<input-field type="text">
+			<name>inquiryReceiver</name>
+			<label lang="de-DE">Empfänger für Produktanfragen</label>
+			<label>Recipient for product inquiries</label>
+			<helpText lang="de-DE">E-Mail-Adresse, an die Produktanfragen aus dem Modal direkt gesendet werden. Umgeht die Empfängerkonfiguration der Kontaktseite.</helpText>
+			<helpText>Email address that receives product inquiries from the modal. Bypasses the contact page receiver configuration.</helpText>
+			<defaultValue>info@hiss-reet.de</defaultValue>
+		</input-field>
 	</card>
 </config>
