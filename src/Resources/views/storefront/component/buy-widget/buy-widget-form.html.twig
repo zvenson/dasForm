@@ -4,11 +4,15 @@
     {{ parent() }}
         {% block buy_widget_inquiry_form %}
             {% set dasformMaster = config('SvenDasForm.config.show') %}
-            {% set dasformProductActive = page.product.translated.customFields.sven_dasform_active ?? false %}
+
+            {% set dasformOwnCf = page.product.translated.customFields ?? {} %}
+            {% set dasformParentCf = page.product.parent.translated.customFields ?? {} %}
+
+            {% set dasformProductActive = dasformOwnCf.sven_dasform_active ?? dasformParentCf.sven_dasform_active ?? false %}
 
             {% if dasformMaster and dasformProductActive %}
-                {% set dasformButtonText = page.product.translated.customFields.sven_dasform_button_text|default('')|trim %}
-                {% set dasformSubject = page.product.translated.customFields.sven_dasform_subject|default('')|trim %}
+                {% set dasformButtonText = (dasformOwnCf.sven_dasform_button_text ?? dasformParentCf.sven_dasform_button_text ?? '')|trim %}
+                {% set dasformSubject = (dasformOwnCf.sven_dasform_subject ?? dasformParentCf.sven_dasform_subject ?? '')|trim %}
                 {% set dasformLabel = dasformButtonText is not empty ? dasformButtonText : 'Produktanfrage' %}
 
                 <div style="height:10px" data-dasform-contact-inject></div>
