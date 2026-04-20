@@ -7,7 +7,7 @@
 
     <services>
         <service id="Sven\DasForm\Subscriber\ContactFormMailSubscriber">
-            <argument type="service" id="Shopware\Core\Content\Mail\Service\AbstractMailService"/>
+            <argument type="service" id="Shopware\Core\Content\Mail\Service\MailService"/>
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
             <tag name="kernel.event_subscriber"/>
         </service>
