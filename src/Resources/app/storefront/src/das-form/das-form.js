@@ -2,7 +2,7 @@ import Plugin from 'src/plugin-system/plugin.class';
 
 export default class DasFormContactInject extends Plugin {
     init() {
-        console.log('[DasForm] JS initialized');
+        console.log('[DasForm] JS initialized v2');
         this._registerAjaxModalHook();
         this._injectFormDataFromLocalStorage();
     }
@@ -50,6 +50,15 @@ export default class DasFormContactInject extends Plugin {
                 commentInput.value = inquiryText
                     ? `${baseComment}\n\n${inquiryText}`
                     : baseComment;
+            }
+
+            const form = (subjectInput && subjectInput.form) || (commentInput && commentInput.form);
+            if (form && !form.querySelector('input[name="dasformInquiry"]')) {
+                const marker = document.createElement('input');
+                marker.type = 'hidden';
+                marker.name = 'dasformInquiry';
+                marker.value = '1';
+                form.appendChild(marker);
             }
 
             if (subjectInput?.value && commentInput?.value) {
