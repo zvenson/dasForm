@@ -1,8 +1,15 @@
 import Plugin from 'src/plugin-system/plugin.class';
 
+const STORAGE_KEYS = [
+    'dasform_productName',
+    'dasform_productId',
+    'dasform_inquiryText',
+    'dasform_inquirySubject',
+];
+
 export default class DasFormContactInject extends Plugin {
     init() {
-        console.log('[DasForm] JS initialized v2');
+        console.log('[DasForm] JS initialized v2.1');
         this._registerAjaxModalHook();
         this._injectFormDataFromLocalStorage();
     }
@@ -11,17 +18,10 @@ export default class DasFormContactInject extends Plugin {
         document.querySelectorAll('[data-ajax-modal]').forEach(link => {
             link.addEventListener('click', () => {
                 const url = new URL(link.getAttribute('data-url'), window.location.origin);
-                const productName = url.searchParams.get('productName') || '';
-                const productId = url.searchParams.get('productId') || '';
-                const inquiryText = url.searchParams.get('inquiryText') || '';
-                const inquirySubject = url.searchParams.get('inquirySubject') || '';
-
-                localStorage.setItem('dasform_productName', productName);
-                localStorage.setItem('dasform_productId', productId);
-                localStorage.setItem('dasform_inquiryText', inquiryText);
-                localStorage.setItem('dasform_inquirySubject', inquirySubject);
-
-                console.log('[DasForm] Stored product data in localStorage');
+                localStorage.setItem('dasform_productName', url.searchParams.get('productName') || '');
+                localStorage.setItem('dasform_productId', url.searchParams.get('productId') || '');
+                localStorage.setItem('dasform_inquiryText', url.searchParams.get('inquiryText') || '');
+                localStorage.setItem('dasform_inquirySubject', url.searchParams.get('inquirySubject') || '');
             });
         });
     }
@@ -53,22 +53,14 @@ export default class DasFormContactInject extends Plugin {
             }
 
             const form = (subjectInput && subjectInput.form) || (commentInput && commentInput.form);
-            if (form && !form.querySelector('input[name="dasformInquiry"]')) {
-                const marker = document.createElement('input');
-                marker.type = 'hidden';
-                marker.name = 'dasformInquiry';
-                marker.value = '1';
-                form.appendChild(marker);
+            if (form && !form.dataset.dasformRouted) {
+                form.setAttribute('action', '/dasform/inquiry');
+                form.dataset.dasformRouted = '1';
+                console.log('[DasForm] Form action redirected to /dasform/inquiry');
             }
 
             if (subjectInput?.value && commentInput?.value) {
-                console.log('[DasForm] Subject and comment prefilled ✅');
-
-                localStorage.removeItem('dasform_productName');
-                localStorage.removeItem('dasform_productId');
-                localStorage.removeItem('dasform_inquiryText');
-                localStorage.removeItem('dasform_inquirySubject');
-
+                STORAGE_KEYS.forEach(k => localStorage.removeItem(k));
                 clearInterval(interval);
             }
         }, 300);
