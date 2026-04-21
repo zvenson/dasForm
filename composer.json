@@ -1,7 +1,7 @@
 {
     "name": "sven/dasform",
     "description": "DAS Form",
-    "version": "v2.1.0",
+    "version": "v2.1.1",
     "type": "shopware-platform-plugin",
     "license": "proprietary",
     "authors": [
@@ -10,9 +10,9 @@
         }
     ],
     "require": {
-         "shopware/core": "6.6.*", 
-    "shopware/administration": "6.6.*", 
-    "shopware/storefront": "6.6.*" 
+        "shopware/core": "6.6.* || 6.7.*",
+        "shopware/administration": "6.6.* || 6.7.*",
+        "shopware/storefront": "6.6.* || 6.7.*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
