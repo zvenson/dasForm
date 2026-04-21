@@ -1,0 +1,12 @@
+{% sw_extends '@Storefront/storefront/element/cms-element-form/form-types/contact-form.html.twig' %}
+
+{% block cms_element_form_contact_form %}
+    {% if app.request.get('productId') %}
+        {% set dasformRenderedForm %}{{ parent() }}{% endset %}
+        {{ dasformRenderedForm|replace({
+            '/form/contact': '/dasform/inquiry'
+        })|raw }}
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
