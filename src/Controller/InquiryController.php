@@ -2,7 +2,7 @@
 
 namespace Sven\DasForm\Controller;
 
-use Shopware\Core\Content\Mail\Service\MailService;
+use Shopware\Core\Content\Mail\Service\AbstractMailService;
 use Shopware\Core\Framework\Api\Context\SalesChannelApiSource;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class InquiryController extends StorefrontController
 {
     public function __construct(
-        private readonly MailService $mailService,
+        private readonly AbstractMailService $mailService,
         private readonly SystemConfigService $systemConfigService,
         private readonly EntityRepository $salutationRepository,
     ) {
