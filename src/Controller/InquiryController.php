@@ -47,11 +47,6 @@ class InquiryController extends StorefrontController
                 return $this->alertResponse('danger', implode(' ', $errors));
             }
 
-            $senderEmail = (string) $this->systemConfigService->get('core.basicInformation.email', $salesChannelId);
-            if ($senderEmail === '') {
-                $senderEmail = $recipient;
-            }
-
             $senderName = (string) $this->systemConfigService->get('core.basicInformation.shopName', $salesChannelId);
             if ($senderName === '') {
                 $senderName = 'Shop';
@@ -71,7 +66,6 @@ class InquiryController extends StorefrontController
             $mailDatabag = new DataBag();
             $mailDatabag->set('recipients', [$recipient => 'Produktanfrage']);
             $mailDatabag->set('senderName', $senderName);
-            $mailDatabag->set('senderEmail', $senderEmail);
             $mailDatabag->set('salesChannelId', $salesChannelId);
             $mailDatabag->set('subject', $subject);
             $mailDatabag->set('contentPlain', $plain);
