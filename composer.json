@@ -1,7 +1,7 @@
 {
     "name": "sven/dasform",
     "description": "DAS Form",
-    "version": "v2.1.3",
+    "version": "v2.2.0",
     "type": "shopware-platform-plugin",
     "license": "proprietary",
     "authors": [

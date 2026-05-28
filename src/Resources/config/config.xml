@@ -19,5 +19,35 @@
 			<helpText>Email address that receives product inquiries from the modal. Bypasses the contact page receiver configuration.</helpText>
 			<defaultValue>info@hiss-reet.de</defaultValue>
 		</input-field>
+		<input-field type="bool">
+			<name>sendConfirmationToInquirer</name>
+			<label lang="de-DE">Bestätigungsmail an Anfrager senden</label>
+			<label>Send confirmation mail to inquirer</label>
+			<helpText lang="de-DE">Sendet zusätzlich eine Eingangsbestätigung an die im Formular angegebene E-Mail-Adresse.</helpText>
+			<helpText>Additionally sends a confirmation to the email address entered in the form.</helpText>
+			<defaultValue>1</defaultValue>
+		</input-field>
+		<input-field type="text">
+			<name>confirmationSubject</name>
+			<label lang="de-DE">Betreff der Bestätigungsmail</label>
+			<label>Subject of the confirmation mail</label>
+			<defaultValue>Ihre Anfrage ist bei uns eingegangen</defaultValue>
+		</input-field>
+		<input-field type="textarea">
+			<name>confirmationIntro</name>
+			<label lang="de-DE">Einleitungstext der Bestätigungsmail</label>
+			<label>Intro text of the confirmation mail</label>
+			<helpText lang="de-DE">Wird oben in der Bestätigungsmail angezeigt. Darunter folgt automatisch die Zusammenfassung der Anfrage.</helpText>
+			<defaultValue>vielen Dank für Ihre Anfrage. Wir haben sie erhalten und melden uns so schnell wie möglich bei Ihnen zurück.
+
+Im Folgenden finden Sie eine Zusammenfassung Ihrer Anfrage.</defaultValue>
+		</input-field>
+		<input-field type="textarea">
+			<name>confirmationSignature</name>
+			<label lang="de-DE">Signatur der Bestätigungsmail</label>
+			<label>Signature of the confirmation mail</label>
+			<defaultValue>Mit freundlichen Grüßen
+Ihr Hiss Reet Team</defaultValue>
+		</input-field>
 	</card>
 </config>
