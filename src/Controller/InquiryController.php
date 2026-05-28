@@ -81,6 +81,22 @@ class InquiryController extends StorefrontController
 
             $this->log(sprintf('dispatched to=%s subject=%s from=%s', $recipient, $subject, $email));
 
+            $sendConfirmation = (bool) $this->systemConfigService->get('SvenDasForm.config.sendConfirmationToInquirer', $salesChannelId);
+            if ($sendConfirmation && $email !== '' && filter_var($email, \FILTER_VALIDATE_EMAIL)) {
+                $this->sendConfirmation(
+                    $salesChannelId,
+                    $senderName,
+                    $email,
+                    $salutation,
+                    $firstName,
+                    $lastName,
+                    $phone,
+                    $subject,
+                    $comment,
+                    $mailContext
+                );
+            }
+
             return $this->alertResponse('success', 'Vielen Dank! Ihre Anfrage wurde erfolgreich gesendet.');
         } catch (\Throwable $e) {
             $this->log(sprintf('FAILED %s: %s', $e::class, $e->getMessage()));
@@ -205,6 +221,158 @@ class InquiryController extends StorefrontController
             . '<div style="white-space:pre-wrap;font-family:inherit;">'
             . $esc($comment !== '' ? $comment : '-')
             . '</div>';
+    }
+
+    private function sendConfirmation(
+        string $salesChannelId,
+        string $senderName,
+        string $email,
+        string $salutation,
+        string $firstName,
+        string $lastName,
+        string $phone,
+        string $subject,
+        string $comment,
+        Context $mailContext
+    ): void {
+        try {
+            $intro = trim((string) $this->systemConfigService->get('SvenDasForm.config.confirmationIntro', $salesChannelId));
+            $signature = trim((string) $this->systemConfigService->get('SvenDasForm.config.confirmationSignature', $salesChannelId));
+            $confirmationSubject = trim((string) $this->systemConfigService->get('SvenDasForm.config.confirmationSubject', $salesChannelId))
+                ?: 'Ihre Anfrage ist bei uns eingegangen';
+
+            $greeting = $this->buildGreeting($salutation, $firstName, $lastName);
+
+            $plain = $this->buildConfirmationPlainBody(
+                $greeting,
+                $intro,
+                $signature,
+                $salutation,
+                $firstName,
+                $lastName,
+                $email,
+                $phone,
+                $subject,
+                $comment
+            );
+            $html = $this->buildConfirmationHtmlBody(
+                $greeting,
+                $intro,
+                $signature,
+                $salutation,
+                $firstName,
+                $lastName,
+                $email,
+                $phone,
+                $subject,
+                $comment
+            );
+
+            $bag = new DataBag();
+            $bag->set('recipients', [$email => trim($firstName . ' ' . $lastName) ?: $email]);
+            $bag->set('senderName', $senderName);
+            $bag->set('salesChannelId', $salesChannelId);
+            $bag->set('subject', $confirmationSubject);
+            $bag->set('contentPlain', $plain);
+            $bag->set('contentHtml', $html);
+
+            $this->mailService->send($bag->all(), $mailContext);
+
+            $this->log(sprintf('confirmation dispatched to=%s subject=%s', $email, $confirmationSubject));
+        } catch (\Throwable $e) {
+            $this->log(sprintf('confirmation FAILED %s: %s', $e::class, $e->getMessage()));
+        }
+    }
+
+    private function buildGreeting(string $salutation, string $firstName, string $lastName): string
+    {
+        $name = trim($firstName . ' ' . $lastName);
+        if ($salutation !== '' && $name !== '') {
+            return $salutation . ' ' . $name . ',';
+        }
+        if ($name !== '') {
+            return 'Hallo ' . $name . ',';
+        }
+
+        return 'Hallo,';
+    }
+
+    private function buildConfirmationPlainBody(
+        string $greeting,
+        string $intro,
+        string $signature,
+        string $salutation,
+        string $firstName,
+        string $lastName,
+        string $email,
+        string $phone,
+        string $subject,
+        string $comment
+    ): string {
+        $lines = [$greeting, ''];
+
+        if ($intro !== '') {
+            $lines[] = $intro;
+            $lines[] = '';
+        }
+
+        $lines[] = '----------------------------------------';
+        $lines[] = 'Ihre Anfrage im Überblick:';
+        $lines[] = '----------------------------------------';
+        if ($salutation !== '') {
+            $lines[] = 'Anrede: ' . $salutation;
+        }
+        $lines[] = 'Name: ' . trim($firstName . ' ' . $lastName);
+        $lines[] = 'E-Mail: ' . ($email !== '' ? $email : '-');
+        $lines[] = 'Telefon: ' . ($phone !== '' ? $phone : '-');
+        $lines[] = 'Betreff: ' . $subject;
+        $lines[] = '';
+        $lines[] = 'Nachricht:';
+        $lines[] = $comment !== '' ? $comment : '-';
+        $lines[] = '';
+
+        if ($signature !== '') {
+            $lines[] = $signature;
+        }
+
+        return implode("\n", $lines) . "\n";
+    }
+
+    private function buildConfirmationHtmlBody(
+        string $greeting,
+        string $intro,
+        string $signature,
+        string $salutation,
+        string $firstName,
+        string $lastName,
+        string $email,
+        string $phone,
+        string $subject,
+        string $comment
+    ): string {
+        $esc = static fn (string $v): string => htmlspecialchars($v, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
+        $nl2br = static fn (string $v): string => nl2br(htmlspecialchars($v, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8'));
+
+        $rows = '';
+        if ($salutation !== '') {
+            $rows .= '<tr><th align="left">Anrede</th><td>' . $esc($salutation) . '</td></tr>';
+        }
+        $rows .= '<tr><th align="left">Name</th><td>' . $esc(trim($firstName . ' ' . $lastName)) . '</td></tr>';
+        $rows .= '<tr><th align="left">E-Mail</th><td>' . $esc($email !== '' ? $email : '-') . '</td></tr>';
+        $rows .= '<tr><th align="left">Telefon</th><td>' . $esc($phone !== '' ? $phone : '-') . '</td></tr>';
+        $rows .= '<tr><th align="left">Betreff</th><td>' . $esc($subject) . '</td></tr>';
+
+        return '<p>' . $esc($greeting) . '</p>'
+            . ($intro !== '' ? '<p>' . $nl2br($intro) . '</p>' : '')
+            . '<p><strong>Ihre Anfrage im Überblick:</strong></p>'
+            . '<table cellpadding="6" cellspacing="0" style="border-collapse:collapse;">'
+            . $rows
+            . '</table>'
+            . '<p><strong>Nachricht:</strong></p>'
+            . '<div style="white-space:pre-wrap;font-family:inherit;">'
+            . $esc($comment !== '' ? $comment : '-')
+            . '</div>'
+            . ($signature !== '' ? '<p>' . $nl2br($signature) . '</p>' : '');
     }
 
     private function alertResponse(string $type, string $message): JsonResponse
