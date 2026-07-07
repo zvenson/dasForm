@@ -15,7 +15,12 @@
                 {% set dasformSubject = (dasformOwnCf.sven_dasform_subject ?? dasformParentCf.sven_dasform_subject ?? '')|trim %}
                 {% set dasformLabel = dasformButtonText is not empty ? dasformButtonText : 'Produktanfrage' %}
 
-                <div style="height:10px" data-dasform-contact-inject></div>
+                <div style="height:10px"
+                     data-dasform-contact-inject
+                     data-dasform-action="{{ path('sven.dasform.inquiry.send') }}"
+                     data-dasform-product-name="{{ page.product.translated.name }}"
+                     data-dasform-inquiry-text="{{ dasformButtonText }}"
+                     data-dasform-inquiry-subject="{{ dasformSubject }}"></div>
 
                 {% set modalUrl = path('frontend.cms.page', {
                     id: config('core.basicInformation.contactPage'),

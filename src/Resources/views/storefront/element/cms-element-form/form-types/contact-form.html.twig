@@ -3,8 +3,12 @@
 {% block cms_element_form_contact_form %}
     {% if app.request.get('productId') %}
         {% set dasformRenderedForm %}{{ parent() }}{% endset %}
+        {# Swap the exact, sales-channel-prefixed contact URL for the inquiry URL.
+           Using path() on both sides keeps the sub-shop domain/path prefix intact. #}
+        {% set dasformContactUrl = path('frontend.form.contact.send') %}
+        {% set dasformInquiryUrl = path('sven.dasform.inquiry.send') %}
         {{ dasformRenderedForm|replace({
-            '/form/contact': '/dasform/inquiry'
+            (dasformContactUrl): dasformInquiryUrl
         })|raw }}
     {% else %}
         {{ parent() }}
