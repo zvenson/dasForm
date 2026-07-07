@@ -1,70 +1,72 @@
 import Plugin from 'src/plugin-system/plugin.class';
 
-const STORAGE_KEYS = [
-    'dasform_productName',
-    'dasform_productId',
-    'dasform_inquiryText',
-    'dasform_inquirySubject',
-];
-
 export default class DasFormContactInject extends Plugin {
     init() {
-        console.log('[DasForm] JS initialized v2.1');
-        this._registerAjaxModalHook();
-        this._injectFormDataFromLocalStorage();
+        // All values are server-rendered onto the inject element, so they carry
+        // the correct sales-channel base path / language prefix for sub-shops.
+        this._action = this.el.dataset.dasformAction || '';
+        this._productName = this.el.dataset.dasformProductName || '';
+        this._inquiryText = this.el.dataset.dasformInquiryText || '';
+        this._inquirySubject = this.el.dataset.dasformInquirySubject || '';
+
+        // The contact form is injected into the DOM later (ajax modal), and the
+        // user may open it at any time. A MutationObserver reacts exactly when
+        // the form appears — no fixed timeout that can expire before the click.
+        this._observer = new MutationObserver(() => this._tryInject());
+        this._observer.observe(document.body, { childList: true, subtree: true });
+
+        // Cover the case where the form is already present at init time.
+        this._tryInject();
     }
 
-    _registerAjaxModalHook() {
-        document.querySelectorAll('[data-ajax-modal]').forEach(link => {
-            link.addEventListener('click', () => {
-                const url = new URL(link.getAttribute('data-url'), window.location.origin);
-                localStorage.setItem('dasform_productName', url.searchParams.get('productName') || '');
-                localStorage.setItem('dasform_productId', url.searchParams.get('productId') || '');
-                localStorage.setItem('dasform_inquiryText', url.searchParams.get('inquiryText') || '');
-                localStorage.setItem('dasform_inquirySubject', url.searchParams.get('inquirySubject') || '');
-            });
-        });
+    /**
+     * Locate the contact/inquiry form via the stable field name attributes
+     * (`subject`, `comment`) instead of element IDs. The DOM ids changed
+     * between Shopware versions (e.g. 6.7), the field names did not — they are
+     * the same keys the controller reads server-side.
+     */
+    _findForm() {
+        const comments = document.querySelectorAll('[name="comment"]');
+        for (const comment of comments) {
+            const form = comment.form;
+            if (form && form.querySelector('[name="subject"]')) {
+                return { form, subjectInput: form.querySelector('[name="subject"]'), commentInput: comment };
+            }
+        }
+        return null;
     }
 
-    _injectFormDataFromLocalStorage() {
-        const interval = setInterval(() => {
-            const subjectInput = document.getElementById('form-subject');
-            const commentInput = document.getElementById('form-comment');
+    _tryInject() {
+        const found = this._findForm();
+        if (!found) {
+            return;
+        }
 
-            const productName = localStorage.getItem('dasform_productName') || '';
-            const inquiryText = localStorage.getItem('dasform_inquiryText') || '';
-            const inquirySubject = localStorage.getItem('dasform_inquirySubject') || '';
+        const { form, subjectInput, commentInput } = found;
 
-            if (!productName) {
-                return;
-            }
+        // Route the form to the sales-channel-correct inquiry endpoint.
+        // Never fall back to a hardcoded absolute path — that breaks on
+        // sub-shops mounted under a domain path prefix.
+        if (this._action && !form.dataset.dasformRouted) {
+            form.setAttribute('action', this._action);
+            form.dataset.dasformRouted = '1';
+        }
 
-            if (subjectInput && !subjectInput.value) {
-                subjectInput.value = inquirySubject
-                    ? inquirySubject
-                    : `Anfrage zum Produkt: ${productName}`;
-            }
+        if (!this._productName) {
+            return;
+        }
 
-            if (commentInput && !commentInput.value) {
-                const baseComment = `Ich interessiere mich für Ihren Artikel ${productName} und bitte um Kontaktaufnahme.`;
-                commentInput.value = inquiryText
-                    ? `${baseComment}\n\n${inquiryText}`
-                    : baseComment;
-            }
+        if (subjectInput && !subjectInput.value) {
+            subjectInput.value = this._inquirySubject
+                ? this._inquirySubject
+                : `Anfrage zum Produkt: ${this._productName}`;
+        }
 
-            const form = (subjectInput && subjectInput.form) || (commentInput && commentInput.form);
-            if (form && !form.dataset.dasformRouted) {
-                form.setAttribute('action', '/dasform/inquiry');
-                form.dataset.dasformRouted = '1';
-                console.log('[DasForm] Form action redirected to /dasform/inquiry');
-            }
-
-            if (subjectInput?.value && commentInput?.value) {
-                STORAGE_KEYS.forEach(k => localStorage.removeItem(k));
-                clearInterval(interval);
-            }
-        }, 300);
-
-        setTimeout(() => clearInterval(interval), 10000);
+        if (commentInput && !commentInput.value) {
+            const baseComment = `Ich interessiere mich für Ihren Artikel ${this._productName} und bitte um Kontaktaufnahme.`;
+            commentInput.value = this._inquiryText
+                ? `${baseComment}\n\n${this._inquiryText}`
+                : baseComment;
+        }
     }
 }
