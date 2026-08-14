@@ -1,3 +1,7 @@
+# 2.4.2
+
+- Die Buttons tragen jetzt die `btn`-Klasse des Themes. Eckenradius, Innenabstand, Schrift und Fokusring kommen damit aus dem Theme des jeweiligen Shops und passen automatisch zu „In den Warenkorb" — auch bei Themes mit runden Pill-Buttons. Bisher war der Radius fest auf 8px gesetzt und wirkte in solchen Themes wie ein Fremdkörper. Eigen bleiben nur Farbe und Anordnung.
+
 # 2.4.1
 
 - Die Datenschutz-Bestätigung wird nur noch dann verlangt, wenn der Shop sie auch anzeigt. Shopware rendert die Checkbox ausschließlich bei aktivem `core.loginRegistration.requireDataProtectionCheckbox` (Einstellungen → Login & Registrierung); ist die Einstellung aus, erscheint nur der Hinweistext. Der Controller hat die Bestätigung bisher trotzdem erzwungen — in solchen Shops liess sich die Anfrage überhaupt nicht absenden, sie scheiterte immer an „Bitte bestätigen Sie die Datenschutzbestimmungen".

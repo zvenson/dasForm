@@ -1,3 +1,7 @@
+# 2.4.2
+
+- The buttons now carry the theme's `btn` class. Border radius, padding, font and focus ring therefore come from each shop's own theme and automatically match "Add to shopping cart" — including themes with fully rounded pill buttons. The radius used to be hardcoded to 8px, which looked out of place in such themes. Only colour and layout remain ours.
+
 # 2.4.1
 
 - The data protection confirmation is now only required when the shop actually shows it. Shopware renders the checkbox exclusively when `core.loginRegistration.requireDataProtectionCheckbox` is enabled (Settings → Login & registration); with the setting off, only the informational text appears. The controller demanded the confirmation regardless — in such shops the inquiry could not be submitted at all, always failing with "Bitte bestätigen Sie die Datenschutzbestimmungen".
