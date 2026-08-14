@@ -1,3 +1,7 @@
+# 2.4.4
+
+- Neue Einstellung **„Eckenradius der Schaltflächen"** (Konfigurationskarte „Schaltflächen"). Leer lassen heißt weiterhin: das Theme bestimmt den Radius — das bleibt der Normalfall. Nötig ist die Angabe nur, wenn ein Theme seinen Kaufen-Button über einen Selektor rundet, der auf unsere Buttons nicht zutrifft (etwa `button.btn-buy` in einer custom.css, während unsere Buttons `<a>`-Elemente sind). Der Wert wird inline gesetzt und schlägt damit jede Stylesheet-Regel; erlaubt sind einfache Längen wie `20px`, `0.5rem` oder `50rem`.
+
 # 2.4.3
 
 - Nachbesserung zu 2.4.2: Die Buttons tragen jetzt `btn btn-primary btn-buy`, also exakt die Klassen des Kaufen-Buttons. Mit `btn` allein erbten sie den *globalen* Button-Radius des Themes und wurden in Themes mit runden Kaufen-Buttons eckig, weil die Rundung dort an der spezifischeren Klasse hängt.

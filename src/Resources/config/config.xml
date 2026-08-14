@@ -84,6 +84,13 @@ Ihr Team</defaultValue>
 			<helpText>Background and border colour of the button. The hover state is derived automatically.</helpText>
 			<defaultValue>#189eff</defaultValue>
 		</input-field>
+		<input-field type="text">
+			<name>buttonBorderRadius</name>
+			<label lang="de-DE">Eckenradius der Schaltflächen</label>
+			<label>Corner radius of the buttons</label>
+			<helpText lang="de-DE">Leer lassen, damit die Buttons den Radius des Themes übernehmen. Nur nötig, wenn das Theme seinen Kaufen-Button über einen Selektor rundet, der hier nicht greift. Beispiele: 20px, 0.5rem, 50rem (Pille).</helpText>
+			<helpText>Leave empty so the buttons inherit the theme's radius. Only needed when the theme rounds its buy button via a selector that does not match here. Examples: 20px, 0.5rem, 50rem (pill).</helpText>
+		</input-field>
 		<input-field type="colorpicker">
 			<name>financingButtonColor</name>
 			<label lang="de-DE">Farbe „Finanzierungsanfrage"</label>

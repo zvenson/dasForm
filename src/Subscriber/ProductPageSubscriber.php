@@ -83,6 +83,7 @@ class ProductPageSubscriber implements EventSubscriberInterface
         $page->addExtension(self::EXTENSION_NAME, new ArrayStruct([
             'inquiry' => $this->buildButton($fields, 'inquiry', $salesChannelId),
             'financing' => $this->buildButton($fields, 'financing', $salesChannelId),
+            'radius' => $this->resolveRadius($salesChannelId),
         ]));
     }
 
@@ -128,6 +129,23 @@ class ProductPageSubscriber implements EventSubscriberInterface
         return preg_match('/^(#[0-9a-fA-F]{3,8}|rgba?\([0-9,.\s%]+\)|[a-zA-Z]+)$/', $color) === 1
             ? $color
             : $fallback;
+    }
+
+    /**
+     * Optional corner radius. Empty means: leave it to the theme, which is the
+     * normal case — the buttons carry the buy button's classes. It is only
+     * needed when a theme rounds its buy button through a selector that does
+     * not match an `<a>`, e.g. `button.btn-buy` in a custom.css.
+     */
+    private function resolveRadius(string $salesChannelId): string
+    {
+        $radius = trim((string) $this->systemConfigService->get(
+            'SvenDasForm.config.buttonBorderRadius',
+            $salesChannelId
+        ));
+
+        // Ends up in an inline style attribute, so only plain CSS lengths pass.
+        return preg_match('/^\d+(\.\d+)?(px|rem|em|%)$/', $radius) === 1 ? $radius : '';
     }
 
     /**

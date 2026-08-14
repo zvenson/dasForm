@@ -1,3 +1,7 @@
+# 2.4.4
+
+- New setting **"Corner radius of the buttons"** (configuration card "Buttons"). Leaving it empty still means the theme decides the radius, which stays the normal case. It is only needed when a theme rounds its buy button through a selector that does not match our buttons (e.g. `button.btn-buy` in a custom.css, while our buttons are `<a>` elements). The value is applied inline and therefore beats any stylesheet rule; plain lengths such as `20px`, `0.5rem` or `50rem` are accepted.
+
 # 2.4.3
 
 - Follow-up to 2.4.2: the buttons now carry `btn btn-primary btn-buy`, exactly the classes of the add-to-cart button. With `btn` alone they inherited the theme's *global* button radius and turned square in themes with rounded buy buttons, where the rounding lives on the more specific class.

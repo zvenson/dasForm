@@ -12,6 +12,7 @@
             {# Built with `if` rather than a `for` loop on purpose: a `set` inside
                a Twig for loop is scoped to that loop and would be lost here. #}
             {% set dasformButtons = [] %}
+            {% set dasformRadius = dasformConfig ? dasformConfig.radius : '' %}
 
             {% if dasformMaster and dasformConfig %}
                 {% if dasformConfig.inquiry and dasformConfig.inquiry.active %}
@@ -57,7 +58,10 @@
                               Groesse und Fokusring kommen damit aus dem Theme und passen zum
                               Nachbarn. Farbe und Anordnung ueberschreiben wir per a.dasform-btn. #}
                            class="btn btn-primary btn-buy dasform-btn dasform-btn--{{ dasformButton.type }}{{ dasformButton.type == 'inquiry' ? ' produktanfrage' : '' }}"
-                           style="--dasform-btn-color: {{ dasformButton.color }};"
+                           {# Der Radius steht bewusst inline und nur dann, wenn er konfiguriert
+                              ist: so schlaegt er jede Theme-Regel, laesst aber im Normalfall
+                              dem Theme den Vortritt. #}
+                           style="--dasform-btn-color: {{ dasformButton.color }};{% if dasformRadius %} border-radius: {{ dasformRadius }};{% endif %}"
                            data-dasform-type="{{ dasformButton.type }}"
                            data-dasform-action="{{ dasformAction }}"
                            data-dasform-inquiry-text="{{ dasformButton.text }}"
