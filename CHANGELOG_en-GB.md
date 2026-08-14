@@ -1,3 +1,7 @@
+# 2.4.1
+
+- The data protection confirmation is now only required when the shop actually shows it. Shopware renders the checkbox exclusively when `core.loginRegistration.requireDataProtectionCheckbox` is enabled (Settings → Login & registration); with the setting off, only the informational text appears. The controller demanded the confirmation regardless — in such shops the inquiry could not be submitted at all, always failing with "Bitte bestätigen Sie die Datenschutzbestimmungen".
+
 # 2.4.0
 
 - **Global activation**: two new switches in the basic configuration show "Product inquiry" resp. "Financing inquiry" on *all* products without ticking a checkbox on each one. While a switch is off, the per-product custom field decides as before.

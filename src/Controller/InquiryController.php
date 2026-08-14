@@ -55,7 +55,15 @@ class InquiryController extends StorefrontController
                 return $this->alertResponse('danger', sprintf('Kein Empfänger für %sn konfiguriert. Bitte kontaktieren Sie den Shop-Betreiber.', $typeLabel));
             }
 
-            $errors = $this->validate($data);
+            // Shopware only renders the data protection checkbox when this is on
+            // (see privacy-notice.html.twig). Demanding it regardless would make
+            // the form unsubmittable in shops that have it switched off.
+            $requiresDataProtection = (bool) $this->systemConfigService->get(
+                'core.loginRegistration.requireDataProtectionCheckbox',
+                $salesChannelId
+            );
+
+            $errors = $this->validate($data, $requiresDataProtection);
             if ($errors !== []) {
                 return $this->alertResponse('danger', implode(' ', $errors));
             }
@@ -126,7 +134,7 @@ class InquiryController extends StorefrontController
     /**
      * @return array<int, string>
      */
-    private function validate(RequestDataBag $data): array
+    private function validate(RequestDataBag $data, bool $requiresDataProtection): array
     {
         $errors = [];
         $firstName = $this->trimOrEmpty($data->get('firstName'));
@@ -147,7 +155,7 @@ class InquiryController extends StorefrontController
         if ($comment === '') {
             $errors[] = 'Bitte geben Sie eine Nachricht ein.';
         }
-        if (!$privacy) {
+        if ($requiresDataProtection && !$privacy) {
             $errors[] = 'Bitte bestätigen Sie die Datenschutzbestimmungen.';
         }
 

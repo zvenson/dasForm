@@ -1,3 +1,7 @@
+# 2.4.1
+
+- Die Datenschutz-Bestätigung wird nur noch dann verlangt, wenn der Shop sie auch anzeigt. Shopware rendert die Checkbox ausschließlich bei aktivem `core.loginRegistration.requireDataProtectionCheckbox` (Einstellungen → Login & Registrierung); ist die Einstellung aus, erscheint nur der Hinweistext. Der Controller hat die Bestätigung bisher trotzdem erzwungen — in solchen Shops liess sich die Anfrage überhaupt nicht absenden, sie scheiterte immer an „Bitte bestätigen Sie die Datenschutzbestimmungen".
+
 # 2.4.0
 
 - **Globale Aktivierung**: Zwei neue Schalter in den Grundeinstellungen blenden „Produktanfrage" bzw. „Finanzierungsanfrage" bei *allen* Produkten ein, ohne dass am einzelnen Produkt ein Haken gesetzt werden muss. Ist der Schalter aus, entscheidet weiterhin das Zusatzfeld am Produkt.
