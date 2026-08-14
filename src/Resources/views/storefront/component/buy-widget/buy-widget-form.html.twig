@@ -53,13 +53,18 @@
                         <a href="{{ dasformModalUrl }}"
                            data-ajax-modal="true"
                            data-url="{{ dasformModalUrl }}"
-                           class="btn dasform-btn dasform-btn--{{ dasformButton.type }}{{ dasformButton.type == 'inquiry' ? ' produktanfrage' : '' }}"
+                           {# btn-primary/btn-buy sind die Klassen des Kaufen-Buttons: Radius,
+                              Groesse und Fokusring kommen damit aus dem Theme und passen zum
+                              Nachbarn. Farbe und Anordnung ueberschreiben wir per a.dasform-btn. #}
+                           class="btn btn-primary btn-buy dasform-btn dasform-btn--{{ dasformButton.type }}{{ dasformButton.type == 'inquiry' ? ' produktanfrage' : '' }}"
                            style="--dasform-btn-color: {{ dasformButton.color }};"
                            data-dasform-type="{{ dasformButton.type }}"
                            data-dasform-action="{{ dasformAction }}"
                            data-dasform-inquiry-text="{{ dasformButton.text }}"
                            data-dasform-inquiry-subject="{{ dasformButton.subject }}">
-                            {% sw_icon dasformButton.icon style { 'pack': 'default', 'size': 'sm' } %}
+                            {# Ohne `size`: das Icon behaelt die Basisgroesse des Themes und
+                               sitzt damit buendig zur Beschriftung. #}
+                            {% sw_icon dasformButton.icon style { 'pack': 'default' } %}
                             <span class="dasform-btn__label">{{ dasformButton.label }}</span>
                         </a>
                     {% endfor %}

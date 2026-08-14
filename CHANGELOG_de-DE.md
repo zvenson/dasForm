@@ -1,3 +1,9 @@
+# 2.4.3
+
+- Nachbesserung zu 2.4.2: Die Buttons tragen jetzt `btn btn-primary btn-buy`, also exakt die Klassen des Kaufen-Buttons. Mit `btn` allein erbten sie den *globalen* Button-Radius des Themes und wurden in Themes mit runden Kaufen-Buttons eckig, weil die Rundung dort an der spezifischeren Klasse hängt.
+- **Höhe korrigiert**: Die Buttons sind jetzt exakt so hoch wie „In den Warenkorb". In Shopware 6.7 steckt die Button-Höhe vollständig in `$btn-line-height` (2,125rem = 34px, plus 2×2px Padding und 2×1px Rahmen = 40px) — das Padding beträgt nur 2px. Das Plugin hatte am Beschriftungs-Element eine eigene `line-height` gesetzt und den Button damit um 14px geschrumpft. Es setzt jetzt keine der größenbestimmenden Eigenschaften mehr (`line-height`, `padding`, `border-radius`, `min-height`, `font-size`), sondern nur noch Farbe und Anordnung.
+- Die Icons laufen in der Basisgröße des Themes statt in `icon-sm` und sitzen damit bündig zur Beschriftung.
+
 # 2.4.2
 
 - Die Buttons tragen jetzt die `btn`-Klasse des Themes. Eckenradius, Innenabstand, Schrift und Fokusring kommen damit aus dem Theme des jeweiligen Shops und passen automatisch zu „In den Warenkorb" — auch bei Themes mit runden Pill-Buttons. Bisher war der Radius fest auf 8px gesetzt und wirkte in solchen Themes wie ein Fremdkörper. Eigen bleiben nur Farbe und Anordnung.

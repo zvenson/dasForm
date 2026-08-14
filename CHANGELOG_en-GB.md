@@ -1,3 +1,9 @@
+# 2.4.3
+
+- Follow-up to 2.4.2: the buttons now carry `btn btn-primary btn-buy`, exactly the classes of the add-to-cart button. With `btn` alone they inherited the theme's *global* button radius and turned square in themes with rounded buy buttons, where the rounding lives on the more specific class.
+- **Height fixed**: the buttons are now exactly as tall as "Add to shopping cart". In Shopware 6.7 the button height lives entirely in `$btn-line-height` (2.125rem = 34px, plus 2×2px padding and 2×1px border = 40px) — the padding is a mere 2px. The plugin set its own `line-height` on the label element and thereby shrank the button by 14px. It no longer sets any size-determining property (`line-height`, `padding`, `border-radius`, `min-height`, `font-size`), only colour and layout.
+- Icons render at the theme's base size instead of `icon-sm` and now line up flush with the label.
+
 # 2.4.2
 
 - The buttons now carry the theme's `btn` class. Border radius, padding, font and focus ring therefore come from each shop's own theme and automatically match "Add to shopping cart" — including themes with fully rounded pill buttons. The radius used to be hardcoded to 8px, which looked out of place in such themes. Only colour and layout remain ours.

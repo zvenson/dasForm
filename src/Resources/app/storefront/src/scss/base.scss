@@ -1,42 +1,54 @@
+// Die Buttons tragen im Template `btn btn-primary btn-buy` — dieselben Klassen
+// wie der Kaufen-Button. Radius, Hoehe, Padding, Schrift, Fokusring und die
+// Icon-Ausrichtung kommen deshalb unveraendert aus dem Theme des jeweiligen
+// Shops. Hier steht nur, was das Theme nicht wissen kann: die Anordnung der
+// beiden Buttons und ihre konfigurierbare Farbe.
+//
+// Absichtlich NICHT gesetzt: line-height, padding, border-radius, min-height
+// und font-size. Jede dieser Angaben wuerde die Buttons in der Groesse von
+// ihrem Nachbarn abweichen lassen — die Hoehe steckt in 6.7 komplett in der
+// `line-height`.
+
 .dasform-buttons {
     display: flex;
     flex-direction: column;
     gap: 10px;
     width: 100%;
-    margin-top: 12px;
+    margin-top: 10px;
 
-    // Stacked on mobile, side by side from the medium breakpoint upwards.
+    // Untereinander auf Mobilgeraeten, ab dem Medium-Breakpoint nebeneinander.
     @include media-breakpoint-up(md) {
         flex-direction: row;
-        flex-wrap: wrap;
     }
 }
 
-// The buttons carry the theme's own `.btn` class on purpose: border radius,
-// padding, font and focus ring then come from the shop's button styling and
-// match the surrounding buttons in any theme. Only colour and layout are ours.
-//
-// Every selector here is `a.dasform-btn` rather than `.dasform-btn` — one class
-// plus the element beats the theme's single `.btn` class, so these declarations
-// win regardless of which stylesheet is loaded last.
+// Selektor mit Element statt nur Klasse: schlaegt die einzelne `.btn-primary`
+// des Themes, damit die konfigurierte Farbe unabhaengig von der Ladereihenfolge
+// der Stylesheets gewinnt.
 a.dasform-btn {
-    // Overridden per button via an inline style carrying the configured colour,
-    // so a colour change needs no theme rebuild.
+    // Wird pro Button per Inline-Style mit der konfigurierten Farbe ueberschrieben,
+    // eine Farbaenderung braucht daher keinen Theme-Build.
     --dasform-btn-color: #{$sw-color-info};
 
     flex: 1 1 0;
     min-width: 0;
+
+    // Zentriert Icon und Beschriftung sauber nebeneinander. Die Hoehe bleibt
+    // dabei identisch zum Kaufen-Button, weil das Label seine `line-height`
+    // aus dem Theme behaelt (6.7: $btn-line-height 2.125rem = 34px, plus
+    // 2x2px Padding und 2x1px Rahmen = 40px). Genau diese `line-height` darf
+    // hier niemals ueberschrieben werden — sie ist die gesamte Button-Hoehe.
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+
     border-color: var(--dasform-btn-color);
     background-color: var(--dasform-btn-color);
     color: $white;
-    transition: filter 0.15s ease-in-out, box-shadow 0.15s ease-in-out, transform 0.15s ease-in-out;
 
-    // Themes underline links by default (Bootstrap 5 `$link-decoration`) and do
-    // so from stylesheets that may be loaded after this one — hence !important.
+    // Themes unterstreichen Links per Default (Bootstrap `$link-decoration`),
+    // teils aus spaeter geladenen Stylesheets — daher !important.
     &,
     &:hover,
     &:focus,
@@ -53,45 +65,18 @@ a.dasform-btn {
         filter: brightness(0.92);
     }
 
-    &:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    &:active {
-        transform: translateY(0);
-        filter: brightness(0.85);
-        box-shadow: none;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        transition: none;
-
-        &:hover,
-        &:active {
-            transform: none;
-        }
-    }
-
+    // `.icon` bringt eine eigene Farbe mit, wodurch das `fill: currentColor` des
+    // Storefronts auf das Icon-Grau zeigen wuerde statt auf die Schriftfarbe des
+    // Buttons. Das ist die einzige Icon-Angabe, die noetig ist.
     .icon {
-        flex: 0 0 auto;
-
-        // `.icon` carries its own colour, which would make the storefront's
-        // `fill: currentColor` resolve to the grey icon base colour instead of
-        // the button's label colour. Everything else stays Shopware standard.
         color: inherit;
 
-        // The storefront nudges icons down (`.icon > svg { top: 0.25em }`, and
-        // `.btn .icon > svg { top: 6px }`) to sit them on a text baseline. This
-        // button centres its content with flexbox, where that nudge is
-        // precisely what pushes the icon out of line.
+        // Der Storefront schiebt Icons in Buttons per `top: 6px` auf die
+        // Textbaseline. Hier zentriert Flexbox bereits, der Versatz wuerde das
+        // Icon nur wieder aus der Mitte kippen. `position: relative` aendert
+        // die Hoehe nicht, es geht also rein um die Optik.
         > svg {
             top: 0;
         }
     }
-}
-
-.dasform-btn__label {
-    line-height: 1.25;
-    overflow-wrap: anywhere;
 }
