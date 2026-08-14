@@ -1,3 +1,14 @@
+# 2.4.0
+
+- **Globale Aktivierung**: Zwei neue Schalter in den Grundeinstellungen blenden „Produktanfrage" bzw. „Finanzierungsanfrage" bei *allen* Produkten ein, ohne dass am einzelnen Produkt ein Haken gesetzt werden muss. Ist der Schalter aus, entscheidet weiterhin das Zusatzfeld am Produkt.
+- **Zweiter Button „Finanzierungsanfrage"**: pro Produkt separat ein-/ausschaltbar, mit eigenem Button-Text und eigenem Betreff (drei neue Zusatzfelder). In der Plugin-Konfiguration lässt sich zusätzlich ein eigener Empfänger für Finanzierungsanfragen hinterlegen — leer bedeutet: gleicher Empfänger wie bei Produktanfragen.
+- Beide Buttons haben jetzt Icons aus dem Shopware-Icon-Set (`envelope` für die Produktanfrage, `euro` für die Finanzierung).
+- Neue Konfigurationskarte „Schaltflächen": Die Farbe beider Buttons ist per Farbwähler einstellbar. Die Farbe wird als CSS-Variable inline gesetzt — eine Farbänderung braucht daher keinen Theme-Build.
+- Buttons wurden neu gestaltet: abgerundet, mit Hover-/Fokus-Zuständen; auf Mobilgeräten untereinander, ab dem Medium-Breakpoint nebeneinander mit gleicher Breite.
+- **Varianten-Fix**: Ein am Hauptprodukt gesetzter Haken wirkt jetzt auch auf dessen Varianten. Bisher wurde im Template auf `page.product.parent` zugegriffen, das auf der Produktdetailseite nie geladen ist; zudem vererbt Shopware `customFields` nur als ganzen Block, sodass eigene Zusatzfelder der Variante die Werte des Hauptprodukts verdeckten. Ein neuer `ProductPageSubscriber` löst die Werte jetzt serverseitig auf und lädt das Hauptprodukt bei Bedarf nach.
+- Die Zusatzfelder werden jetzt auch beim Aktivieren des Plugins angelegt. Bisher geschah das nur bei `install()`/`update()` — wurde das Feldset nie erzeugt (z. B. weil die DB die aktuelle Version bereits kannte und `plugin:update` nichts tat), fehlte der Reiter „Produktanfrage" im Produkt dauerhaft und der Anfrage-Button konnte nirgends aktiviert werden.
+- Die Anfrageart wird als Query-Parameter an der Formular-Action übergeben, damit auch ohne JavaScript der richtige Empfänger und die richtige Betitelung der Mail greifen.
+
 # 2.3.1
 
 - Shopware-6.7-Kompatibilität: Das Formular wird nicht mehr über feste Element-IDs (`form-subject`/`form-comment`) gefunden, sondern über die versionsstabilen Feld-Namen (`subject`/`comment`). In 6.7 hatten sich die IDs geändert, wodurch weder die Vorbefüllung noch der Versand griffen.

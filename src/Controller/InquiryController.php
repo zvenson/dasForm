@@ -14,6 +14,7 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Shopware\Storefront\Controller\StorefrontController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(defaults: ['_routeScope' => ['storefront']])]
@@ -32,14 +33,26 @@ class InquiryController extends StorefrontController
         defaults: ['XmlHttpRequest' => true],
         methods: ['POST']
     )]
-    public function send(RequestDataBag $data, SalesChannelContext $context): JsonResponse
+    public function send(Request $request, RequestDataBag $data, SalesChannelContext $context): JsonResponse
     {
         try {
             $salesChannelId = $context->getSalesChannel()->getId();
 
+            // The button type travels as a query parameter on the form action, so
+            // it survives a submit without JavaScript.
+            $isFinancing = $request->query->get('type') === 'financing';
+            $typeLabel = $isFinancing ? 'Finanzierungsanfrage' : 'Produktanfrage';
+
             $recipient = trim((string) $this->systemConfigService->get('SvenDasForm.config.inquiryReceiver', $salesChannelId));
+            if ($isFinancing) {
+                $financingRecipient = trim((string) $this->systemConfigService->get('SvenDasForm.config.financingReceiver', $salesChannelId));
+                if ($financingRecipient !== '') {
+                    $recipient = $financingRecipient;
+                }
+            }
+
             if ($recipient === '') {
-                return $this->alertResponse('danger', 'Kein Empfänger für Produktanfragen konfiguriert. Bitte kontaktieren Sie den Shop-Betreiber.');
+                return $this->alertResponse('danger', sprintf('Kein Empfänger für %sn konfiguriert. Bitte kontaktieren Sie den Shop-Betreiber.', $typeLabel));
             }
 
             $errors = $this->validate($data);
@@ -57,14 +70,14 @@ class InquiryController extends StorefrontController
             $lastName = $this->trimOrEmpty($data->get('lastName'));
             $email = $this->trimOrEmpty($data->get('email'));
             $phone = $this->trimOrEmpty($data->get('phone'));
-            $subject = $this->trimOrEmpty($data->get('subject')) ?: 'Produktanfrage';
+            $subject = $this->trimOrEmpty($data->get('subject')) ?: $typeLabel;
             $comment = $this->trimOrEmpty($data->get('comment'));
 
-            $plain = $this->buildPlainBody($salutation, $firstName, $lastName, $email, $phone, $subject, $comment);
-            $html = $this->buildHtmlBody($salutation, $firstName, $lastName, $email, $phone, $subject, $comment);
+            $plain = $this->buildPlainBody($salutation, $firstName, $lastName, $email, $phone, $subject, $comment, $typeLabel);
+            $html = $this->buildHtmlBody($salutation, $firstName, $lastName, $email, $phone, $subject, $comment, $typeLabel);
 
             $mailDatabag = new DataBag();
-            $mailDatabag->set('recipients', [$recipient => 'Produktanfrage']);
+            $mailDatabag->set('recipients', [$recipient => $typeLabel]);
             $mailDatabag->set('senderName', $senderName);
             $mailDatabag->set('salesChannelId', $salesChannelId);
             $mailDatabag->set('subject', $subject);
@@ -171,10 +184,11 @@ class InquiryController extends StorefrontController
         string $email,
         string $phone,
         string $subject,
-        string $comment
+        string $comment,
+        string $typeLabel
     ): string {
         $lines = [
-            'Neue Produktanfrage über das Shop-Formular',
+            'Neue ' . $typeLabel . ' über das Shop-Formular',
             '',
         ];
 
@@ -200,7 +214,8 @@ class InquiryController extends StorefrontController
         string $email,
         string $phone,
         string $subject,
-        string $comment
+        string $comment,
+        string $typeLabel
     ): string {
         $esc = static fn (string $v): string => htmlspecialchars($v, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
 
@@ -213,7 +228,7 @@ class InquiryController extends StorefrontController
         $rows .= '<tr><th align="left">Telefon</th><td>' . $esc($phone !== '' ? $phone : '-') . '</td></tr>';
         $rows .= '<tr><th align="left">Betreff</th><td>' . $esc($subject) . '</td></tr>';
 
-        return '<p><strong>Neue Produktanfrage über das Shop-Formular</strong></p>'
+        return '<p><strong>Neue ' . $esc($typeLabel) . ' über das Shop-Formular</strong></p>'
             . '<table cellpadding="6" cellspacing="0" style="border-collapse:collapse;">'
             . $rows
             . '</table>'

@@ -4,6 +4,13 @@ This Shopware 6 plugin adds a "Product Inquiry" button beneath the Add to Cart b
 When clicked, it opens a modal window containing a contact form that allows customers to ask questions about the product.
 The subject and message fields in the form are automatically pre-filled with the product name to save your customers time and encourage interaction.
 
+✨ What's new in 2.4
+- **Global activation** per button in the plugin config — switch it on once and the button appears on every product, no per-product tick needed. With the switch off, the per-product custom field decides (as in 2.0).
+- Second button **"Finanzierungsanfrage"** next to the product inquiry, with its own per-product switch, button label and subject — and optionally its own recipient address.
+- Icons on both buttons (`envelope` / `euro` from the Shopware icon set) and configurable button colours (Plugin config → "Schaltflächen").
+- Responsive layout: stacked on mobile, side by side on desktop.
+- Values maintained on a main product now reach its variants reliably (resolved server-side instead of relying on Twig inheritance).
+
 ✨ What's new in 2.0
 - Per-product activation: three new custom fields on every product (tab "Specifications / Freitextfelder" → section "Produktanfrage"):
   - **Produktanfrage aktiv?** (bool, default off) – the button only appears when this is enabled AND the global master switch is on. The master switch alone no longer shows the button on any product – you have to opt each product in.

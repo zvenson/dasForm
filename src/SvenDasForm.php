@@ -8,6 +8,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Plugin;
+use Shopware\Core\Framework\Plugin\Context\ActivateContext;
 use Shopware\Core\Framework\Plugin\Context\InstallContext;
 use Shopware\Core\Framework\Plugin\Context\UninstallContext;
 use Shopware\Core\Framework\Plugin\Context\UpdateContext;
@@ -27,6 +28,14 @@ class SvenDasForm extends Plugin
     {
         parent::update($updateContext);
         $this->addCustomFieldSet($updateContext->getContext());
+    }
+
+    public function activate(ActivateContext $activateContext): void
+    {
+        parent::activate($activateContext);
+        // Also here, so a deactivate/activate cycle repairs a missing field set
+        // without requiring a version bump for plugin:update to run update().
+        $this->addCustomFieldSet($activateContext->getContext());
     }
 
     public function uninstall(UninstallContext $uninstallContext): void
@@ -98,6 +107,56 @@ class SvenDasForm extends Plugin
                     'componentName' => 'sw-field',
                     'customFieldType' => 'text',
                     'customFieldPosition' => 3,
+                ],
+            ],
+            [
+                'name' => 'sven_dasform_financing_active',
+                'type' => CustomFieldTypes::BOOL,
+                'config' => [
+                    'label' => [
+                        'de-DE' => 'Finanzierungsanfrage aktiv?',
+                        'en-GB' => 'Financing inquiry active?',
+                        Defaults::LANGUAGE_SYSTEM => 'Financing inquiry active?',
+                    ],
+                    'componentName' => 'sw-field',
+                    'customFieldType' => 'checkbox',
+                    'customFieldPosition' => 4,
+                ],
+            ],
+            [
+                'name' => 'sven_dasform_financing_button_text',
+                'type' => CustomFieldTypes::TEXT,
+                'config' => [
+                    'label' => [
+                        'de-DE' => 'Button-Text / Anfragetext (Finanzierung)',
+                        'en-GB' => 'Button label / inquiry text (financing)',
+                        Defaults::LANGUAGE_SYSTEM => 'Button label / inquiry text (financing)',
+                    ],
+                    'helpText' => [
+                        'de-DE' => 'Ersetzt den Standard-Button-Text "Finanzierungsanfrage" und wird zusätzlich im Kommentarfeld des Formulars vorausgefüllt.',
+                        'en-GB' => 'Replaces the default "Financing inquiry" button label and is prefilled in the form comment field.',
+                    ],
+                    'componentName' => 'sw-field',
+                    'customFieldType' => 'text',
+                    'customFieldPosition' => 5,
+                ],
+            ],
+            [
+                'name' => 'sven_dasform_financing_subject',
+                'type' => CustomFieldTypes::TEXT,
+                'config' => [
+                    'label' => [
+                        'de-DE' => 'Betreff des Formulars (Finanzierung)',
+                        'en-GB' => 'Form subject (financing)',
+                        Defaults::LANGUAGE_SYSTEM => 'Form subject (financing)',
+                    ],
+                    'helpText' => [
+                        'de-DE' => 'Wird als Betreff in das Kontaktformular vorausgefüllt. Leer lassen für den Standardwert des Formulars.',
+                        'en-GB' => 'Prefilled as the subject in the contact form. Leave empty to use the form default.',
+                    ],
+                    'componentName' => 'sw-field',
+                    'customFieldType' => 'text',
+                    'customFieldPosition' => 6,
                 ],
             ],
         ];

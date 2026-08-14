@@ -11,6 +11,22 @@
 			<label>Switch on Das Form</label>
 			<defaultValue>1</defaultValue>
 		</input-field>
+		<input-field type="bool">
+			<name>showInquiryOnAllProducts</name>
+			<label lang="de-DE">Produktanfrage global aktivieren</label>
+			<label>Enable product inquiry globally</label>
+			<helpText lang="de-DE">Zeigt den Button „Produktanfrage" bei jedem Produkt, ohne dass am einzelnen Produkt ein Haken gesetzt werden muss. Das Zusatzfeld am Produkt bleibt wirkungslos, solange dieser Schalter an ist.</helpText>
+			<helpText>Shows the "Product inquiry" button on every product without ticking the checkbox on each one. While this switch is on, the per-product custom field has no effect.</helpText>
+			<defaultValue>0</defaultValue>
+		</input-field>
+		<input-field type="bool">
+			<name>showFinancingOnAllProducts</name>
+			<label lang="de-DE">Finanzierungsanfrage global aktivieren</label>
+			<label>Enable financing inquiry globally</label>
+			<helpText lang="de-DE">Wie oben, aber für den Button „Finanzierungsanfrage".</helpText>
+			<helpText>Same as above, but for the "Financing inquiry" button.</helpText>
+			<defaultValue>0</defaultValue>
+		</input-field>
 		<input-field type="text">
 			<name>inquiryReceiver</name>
 			<label lang="de-DE">Empfänger für Produktanfragen</label>
@@ -18,6 +34,13 @@
 			<helpText lang="de-DE">E-Mail-Adresse, an die Produktanfragen aus dem Modal direkt gesendet werden. Umgeht die Empfängerkonfiguration der Kontaktseite.</helpText>
 			<helpText>Email address that receives product inquiries from the modal. Bypasses the contact page receiver configuration.</helpText>
 			<defaultValue></defaultValue>
+		</input-field>
+		<input-field type="text">
+			<name>financingReceiver</name>
+			<label lang="de-DE">Empfänger für Finanzierungsanfragen</label>
+			<label>Recipient for financing inquiries</label>
+			<helpText lang="de-DE">E-Mail-Adresse für Anfragen über den Finanzierungs-Button. Leer lassen, um denselben Empfänger wie für Produktanfragen zu verwenden.</helpText>
+			<helpText>Email address for inquiries sent via the financing button. Leave empty to use the same recipient as for product inquiries.</helpText>
 		</input-field>
 		<input-field type="bool">
 			<name>sendConfirmationToInquirer</name>
@@ -48,6 +71,26 @@ Im Folgenden finden Sie eine Zusammenfassung Ihrer Anfrage.</defaultValue>
 			<label>Signature of the confirmation mail</label>
 			<defaultValue>Mit freundlichen Grüßen
 Ihr Team</defaultValue>
+		</input-field>
+	</card>
+	<card>
+		<title>Buttons</title>
+		<title lang="de-DE">Schaltflächen</title>
+		<input-field type="colorpicker">
+			<name>inquiryButtonColor</name>
+			<label lang="de-DE">Farbe „Produktanfrage"</label>
+			<label>Colour of the product inquiry button</label>
+			<helpText lang="de-DE">Hintergrund- und Rahmenfarbe der Schaltfläche. Der Hover-Zustand wird automatisch abgeleitet.</helpText>
+			<helpText>Background and border colour of the button. The hover state is derived automatically.</helpText>
+			<defaultValue>#189eff</defaultValue>
+		</input-field>
+		<input-field type="colorpicker">
+			<name>financingButtonColor</name>
+			<label lang="de-DE">Farbe „Finanzierungsanfrage"</label>
+			<label>Colour of the financing inquiry button</label>
+			<helpText lang="de-DE">Hintergrund- und Rahmenfarbe der Schaltfläche. Der Hover-Zustand wird automatisch abgeleitet.</helpText>
+			<helpText>Background and border colour of the button. The hover state is derived automatically.</helpText>
+			<defaultValue>#16a34a</defaultValue>
 		</input-field>
 	</card>
 </config>

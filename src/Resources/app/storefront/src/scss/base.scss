@@ -1,16 +1,101 @@
-.btn.produktanfrage {
-    display: block;
+.dasform-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     width: 100%;
-    border-radius: 0;
-    background-color: $sw-color-info;
-    border-color: $sw-color-info;
+    margin-top: 12px;
+
+    // Stacked on mobile, side by side from the medium breakpoint upwards.
+    @include media-breakpoint-up(md) {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+.dasform-btn {
+    // Overridden per button via an inline style carrying the configured colour,
+    // so a colour change needs no theme rebuild.
+    --dasform-btn-color: #{$sw-color-info};
+
+    flex: 1 1 0;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border: 1px solid var(--dasform-btn-color);
+    border-radius: 8px;
+    background-color: var(--dasform-btn-color);
     color: $white;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: center;
+    cursor: pointer;
+    transition: filter 0.15s ease-in-out, box-shadow 0.15s ease-in-out, transform 0.15s ease-in-out;
+
+    // Themes underline links by default (Bootstrap 5 `$link-decoration`) and do
+    // so from stylesheets that may be loaded after this one — hence !important.
+    &,
+    &:hover,
+    &:focus,
+    &:active {
+        text-decoration: none !important;
+    }
 
     &:hover,
     &:focus,
     &:active {
-        background-color: darken($sw-color-info, 8%);
-        border-color: darken($sw-color-info, 8%);
         color: $white;
+        filter: brightness(0.92);
     }
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--dasform-btn-color);
+        outline-offset: 2px;
+    }
+
+    &:active {
+        transform: translateY(0);
+        filter: brightness(0.85);
+        box-shadow: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        transition: none;
+
+        &:hover,
+        &:active {
+            transform: none;
+        }
+    }
+}
+
+.dasform-btn {
+    .icon {
+        flex: 0 0 auto;
+
+        // `.icon` carries its own colour, which would make the storefront's
+        // `fill: currentColor` resolve to the grey icon base colour instead of
+        // the button's label colour. Everything else stays Shopware standard.
+        color: inherit;
+
+        // The storefront nudges icons down (`.icon > svg { top: 0.25em }`, in
+        // buttons even `top: 6px`) to sit them on a text baseline. This button
+        // centres its content with flexbox, where that nudge is precisely what
+        // pushes the icon out of line.
+        > svg {
+            top: 0;
+        }
+    }
+}
+
+.dasform-btn__label {
+    line-height: 1.25;
+    overflow-wrap: anywhere;
 }

@@ -5,37 +5,65 @@
         {% block buy_widget_inquiry_form %}
             {% set dasformMaster = config('SvenDasForm.config.show') %}
 
-            {% set dasformOwnCf = page.product.translated.customFields ?? {} %}
-            {% set dasformParentCf = page.product.parent.translated.customFields ?? {} %}
+            {# Resolved server-side by ProductPageSubscriber, including the values
+               inherited from the main product of a variant. #}
+            {% set dasformConfig = page.extensions.dasForm %}
 
-            {% set dasformProductActive = dasformOwnCf.sven_dasform_active ?? dasformParentCf.sven_dasform_active ?? false %}
+            {# Built with `if` rather than a `for` loop on purpose: a `set` inside
+               a Twig for loop is scoped to that loop and would be lost here. #}
+            {% set dasformButtons = [] %}
 
-            {% if dasformMaster and dasformProductActive %}
-                {% set dasformButtonText = (dasformOwnCf.sven_dasform_button_text ?? dasformParentCf.sven_dasform_button_text ?? '')|trim %}
-                {% set dasformSubject = (dasformOwnCf.sven_dasform_subject ?? dasformParentCf.sven_dasform_subject ?? '')|trim %}
-                {% set dasformLabel = dasformButtonText is not empty ? dasformButtonText : 'Produktanfrage' %}
+            {% if dasformMaster and dasformConfig %}
+                {% if dasformConfig.inquiry and dasformConfig.inquiry.active %}
+                    {% set dasformButtons = dasformButtons|merge([dasformConfig.inquiry|merge({
+                        'type': 'inquiry',
+                        'icon': 'envelope'
+                    })]) %}
+                {% endif %}
 
-                <div style="height:10px"
+                {% if dasformConfig.financing and dasformConfig.financing.active %}
+                    {% set dasformButtons = dasformButtons|merge([dasformConfig.financing|merge({
+                        'type': 'financing',
+                        'icon': 'euro'
+                    })]) %}
+                {% endif %}
+            {% endif %}
+
+            {% if dasformButtons is not empty %}
+                <div class="dasform-buttons"
                      data-dasform-contact-inject
-                     data-dasform-action="{{ path('sven.dasform.inquiry.send') }}"
-                     data-dasform-product-name="{{ page.product.translated.name }}"
-                     data-dasform-inquiry-text="{{ dasformButtonText }}"
-                     data-dasform-inquiry-subject="{{ dasformSubject }}"></div>
+                     data-dasform-product-name="{{ page.product.translated.name }}">
+                    {% for dasformButton in dasformButtons %}
+                        {% set dasformModalUrl = path('frontend.cms.page', {
+                            id: config('core.basicInformation.contactPage'),
+                            productName: page.product.translated.name,
+                            productId: page.product.id,
+                            inquiryText: dasformButton.text,
+                            inquirySubject: dasformButton.subject,
+                            inquiryType: dasformButton.type
+                        }) %}
 
-                {% set modalUrl = path('frontend.cms.page', {
-                    id: config('core.basicInformation.contactPage'),
-                    productName: page.product.translated.name,
-                    productId: page.product.id,
-                    inquiryText: dasformButtonText,
-                    inquirySubject: dasformSubject
-                }) %}
+                        {# The action carries the sales-channel prefix and the type,
+                           so the controller knows which recipient to use even
+                           without JavaScript. #}
+                        {% set dasformAction = dasformButton.type == 'financing'
+                            ? path('sven.dasform.inquiry.send', { type: 'financing' })
+                            : path('sven.dasform.inquiry.send') %}
 
-                <a href="{{ modalUrl }}"
-                   data-ajax-modal="true"
-                   data-url="{{ modalUrl }}"
-                   class="btn btn-primary btn-buy produktanfrage w-100">
-                    {{ dasformLabel }}
-                </a>
+                        <a href="{{ dasformModalUrl }}"
+                           data-ajax-modal="true"
+                           data-url="{{ dasformModalUrl }}"
+                           class="dasform-btn dasform-btn--{{ dasformButton.type }}{{ dasformButton.type == 'inquiry' ? ' produktanfrage' : '' }}"
+                           style="--dasform-btn-color: {{ dasformButton.color }};"
+                           data-dasform-type="{{ dasformButton.type }}"
+                           data-dasform-action="{{ dasformAction }}"
+                           data-dasform-inquiry-text="{{ dasformButton.text }}"
+                           data-dasform-inquiry-subject="{{ dasformButton.subject }}">
+                            {% sw_icon dasformButton.icon style { 'pack': 'default', 'size': 'sm' } %}
+                            <span class="dasform-btn__label">{{ dasformButton.label }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
             {% endif %}
         {% endblock %}
 {% endblock %}

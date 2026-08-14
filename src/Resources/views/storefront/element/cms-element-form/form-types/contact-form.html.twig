@@ -6,7 +6,9 @@
         {# Swap the exact, sales-channel-prefixed contact URL for the inquiry URL.
            Using path() on both sides keeps the sub-shop domain/path prefix intact. #}
         {% set dasformContactUrl = path('frontend.form.contact.send') %}
-        {% set dasformInquiryUrl = path('sven.dasform.inquiry.send') %}
+        {% set dasformInquiryUrl = app.request.get('inquiryType') == 'financing'
+            ? path('sven.dasform.inquiry.send', { type: 'financing' })
+            : path('sven.dasform.inquiry.send') %}
         {{ dasformRenderedForm|replace({
             (dasformContactUrl): dasformInquiryUrl
         })|raw }}

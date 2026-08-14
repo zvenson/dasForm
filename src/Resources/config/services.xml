@@ -6,6 +6,12 @@
            https://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <service id="Sven\DasForm\Subscriber\ProductPageSubscriber">
+            <argument type="service" id="product.repository"/>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
         <service id="Sven\DasForm\Controller\InquiryController" public="true">
             <argument type="service" id="Shopware\Core\Content\Mail\Service\MailService"/>
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
