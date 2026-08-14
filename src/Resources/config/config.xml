@@ -74,6 +74,34 @@ Ihr Team</defaultValue>
 		</input-field>
 	</card>
 	<card>
+		<title>Financing rates</title>
+		<title lang="de-DE">Finanzierungsraten</title>
+		<input-field type="bool">
+			<name>showRates</name>
+			<label lang="de-DE">Ratenvorschau am Finanzierungs-Button anzeigen</label>
+			<label>Show rate preview on the financing button</label>
+			<helpText lang="de-DE">Blendet beim Überfahren des Buttons die möglichen Monatsraten ein (netto und brutto). Gerechnet wird centgenau nach der Vorgabe des Anbieters, auf Basis des Nettopreises. Ausserhalb von 300 € bis 30.000 € netto erscheint keine Rate.</helpText>
+			<helpText>Shows the possible monthly rates (net and gross) when hovering the button. Calculated to the cent according to the provider's specification, based on the net price. No rate is shown outside 300 € to 30,000 € net.</helpText>
+			<defaultValue>1</defaultValue>
+		</input-field>
+		<input-field type="float">
+			<name>minRatePrice</name>
+			<label lang="de-DE">Mindestpreis für die Ratenvorschau (netto)</label>
+			<label>Minimum price for the rate preview (net)</label>
+			<helpText lang="de-DE">Unterhalb dieses Nettopreises wird keine Rate angezeigt. Voreinstellung 300 € entsprechend dem Gültigkeitsbereich der Anbieter-Spezifikation. Zum Testen ruhig auf 0 setzen.</helpText>
+			<helpText>No rate is shown below this net price. Default 300 € according to the provider specification's valid range. Set to 0 for testing.</helpText>
+			<defaultValue>300</defaultValue>
+		</input-field>
+		<input-field type="float">
+			<name>maxRatePrice</name>
+			<label lang="de-DE">Höchstpreis für die Ratenvorschau (netto)</label>
+			<label>Maximum price for the rate preview (net)</label>
+			<helpText lang="de-DE">Oberhalb dieses Nettopreises wird keine Rate angezeigt. Voreinstellung 30.000 €.</helpText>
+			<helpText>No rate is shown above this net price. Default 30,000 €.</helpText>
+			<defaultValue>30000</defaultValue>
+		</input-field>
+	</card>
+	<card>
 		<title>Buttons</title>
 		<title lang="de-DE">Schaltflächen</title>
 		<input-field type="colorpicker">

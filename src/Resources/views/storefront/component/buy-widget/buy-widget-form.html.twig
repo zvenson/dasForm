@@ -13,6 +13,7 @@
                a Twig for loop is scoped to that loop and would be lost here. #}
             {% set dasformButtons = [] %}
             {% set dasformRadius = dasformConfig ? dasformConfig.radius : '' %}
+            {% set dasformRates = dasformConfig ? dasformConfig.rates : [] %}
 
             {% if dasformMaster and dasformConfig %}
                 {% if dasformConfig.inquiry and dasformConfig.inquiry.active %}
@@ -51,6 +52,11 @@
                             ? path('sven.dasform.inquiry.send', { type: 'financing' })
                             : path('sven.dasform.inquiry.send') %}
 
+                        {% set dasformShowRates = dasformButton.type == 'financing' and dasformRates is not empty %}
+
+                        {# Wrapper traegt die Flex-Breite, damit der Tooltip absolut dazu
+                           positioniert werden kann, ohne die Button-Groesse anzufassen. #}
+                        <div class="dasform-btn-wrap{{ dasformShowRates ? ' dasform-btn-wrap--rates' : '' }}">
                         <a href="{{ dasformModalUrl }}"
                            data-ajax-modal="true"
                            data-url="{{ dasformModalUrl }}"
@@ -65,12 +71,38 @@
                            data-dasform-type="{{ dasformButton.type }}"
                            data-dasform-action="{{ dasformAction }}"
                            data-dasform-inquiry-text="{{ dasformButton.text }}"
-                           data-dasform-inquiry-subject="{{ dasformButton.subject }}">
+                           data-dasform-inquiry-subject="{{ dasformButton.subject }}"
+                           {% if dasformShowRates %}aria-describedby="dasform-rates"{% endif %}>
                             {# Ohne `size`: das Icon behaelt die Basisgroesse des Themes und
                                sitzt damit buendig zur Beschriftung. #}
                             {% sw_icon dasformButton.icon style { 'pack': 'default' } %}
                             <span class="dasform-btn__label">{{ dasformButton.label }}</span>
                         </a>
+
+                        {% if dasformShowRates %}
+                            {# Wird vom Storefront-Plugin an <body> gehaengt und per
+                               position: fixed platziert — so kann kein Vorfahre mit
+                               overflow: hidden den Tooltip abschneiden. #}
+                            <div class="dasform-rates" id="dasform-rates" role="tooltip" data-dasform-rates>
+                                <div class="dasform-rates__title">Mögliche Monatsraten</div>
+
+                                {% for dasformRate in dasformRates %}
+                                    <div class="dasform-rates__row">
+                                        <span class="dasform-rates__name">{{ dasformRate.label }}</span>
+                                        <span class="dasform-rates__price">
+                                            {{ dasformRate.net|currency }}
+                                            <span class="dasform-rates__gross">/ {{ dasformRate.gross|currency }} brutto</span>
+                                        </span>
+                                        <span class="dasform-rates__meta">
+                                            {{ dasformRate.credit }} % Kaufanrechnung, Rückgabe ab Monat {{ dasformRate.returnFrom }}
+                                        </span>
+                                    </div>
+                                {% endfor %}
+
+                                <div class="dasform-rates__note">Unverbindlich, Details auf Anfrage.</div>
+                            </div>
+                        {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
             {% endif %}

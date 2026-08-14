@@ -22,6 +22,15 @@
     }
 }
 
+// Traegt die Flex-Breite und dient dem Tooltip als Bezugspunkt. Der Button
+// selbst bleibt unangetastet, damit seine Groesse die des Themes bleibt.
+.dasform-btn-wrap {
+    position: relative;
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
 // Selektor mit Element statt nur Klasse: schlaegt die einzelne `.btn-primary`
 // des Themes, damit die konfigurierte Farbe unabhaengig von der Ladereihenfolge
 // der Stylesheets gewinnt.
@@ -79,4 +88,69 @@ a.dasform-btn {
             top: 0;
         }
     }
+}
+
+// Ratenvorschau. Das Element wird vom Storefront-Plugin an <body> gehaengt und
+// per `position: fixed` platziert (dieselbe Technik wie die Preis-Tooltips in
+// SvenDasMiet). Absolute Positionierung im Buy-Widget wuerde an einem Vorfahren
+// mit `overflow: hidden` haengenbleiben.
+.dasform-rates {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1060;
+    display: none;
+    width: max-content;
+    // 24px = zweimal der Rand, den das Storefront-Plugin beim Positionieren
+    // einhaelt. So passt der Tooltip auch auf schmalen Bildschirmen vollstaendig
+    // ins Sichtfeld, statt rechts angeschnitten zu werden.
+    max-width: min(320px, calc(100vw - 24px));
+    padding: 10px 12px;
+    border-radius: 6px;
+    background-color: var(--bs-dark, #1f2933);
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.35;
+    text-align: left;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+
+    &.is-visible {
+        display: block;
+    }
+}
+
+.dasform-rates__title {
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.dasform-rates__row {
+    display: flex;
+    flex-direction: column;
+
+    & + & {
+        margin-top: 6px;
+        padding-top: 6px;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+    }
+}
+
+.dasform-rates__name {
+    font-weight: 600;
+}
+
+.dasform-rates__gross {
+    opacity: 0.75;
+}
+
+.dasform-rates__meta {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.dasform-rates__note {
+    margin-top: 8px;
+    font-size: 11px;
+    opacity: 0.6;
 }

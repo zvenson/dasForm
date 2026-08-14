@@ -1,3 +1,11 @@
+# 2.5.0
+
+- **Ratenvorschau als Tooltip**: Beim Überfahren des Finanzierungs-Buttons erscheinen die möglichen Monatsraten der drei FLEX-Varianten, jeweils netto und brutto, dazu Kaufanrechnung und frühester Rückgabemonat. Abschaltbar über die neue Konfigurationskarte „Finanzierungsraten".
+- Der Tooltip wird vom Storefront-Plugin an `<body>` gehängt und per `position: fixed` platziert — dieselbe Technik wie die Preis-Tooltips in SvenDasMiet. Absolut positioniert im Buy-Widget bliebe er an einem Vorfahren mit `overflow: hidden` hängen.
+- Der Preisbereich der Vorschau ist konfigurierbar (Voreinstellung 300 € bis 30.000 € netto). Zum Testen mit günstigen Artikeln lässt sich der Mindestpreis auf 0 setzen.
+- Die Berechnung folgt der Spezifikation des Anbieters centgenau: durchgehend ganzzahlige Cent, `amort` als ganzzahliger Bruch statt als Gleitkommazahl, kaufmännische Rundung (halbe Cent aufwärts), und die Umsatzsteuer auf den bereits gerundeten Rate-Betrag. Gegen eine unabhängige Implementierung über den gesamten Bereich 300 € bis 30.000 € in Einercent-Schritten geprüft: keine Abweichung. Zum Vergleich: dieselbe Rechnung in `double` weicht dort je nach Variante 7.425 bis 15.469 mal um einen Cent ab.
+- Gerechnet wird auf den **Nettopreis**; führt der Verkaufskanal Bruttopreise, wird der Nettobetrag über den Steuerzustand ermittelt. Ausserhalb von 300 € bis 30.000 € netto erscheint keine Rate.
+
 # 2.4.4
 
 - Neue Einstellung **„Eckenradius der Schaltflächen"** (Konfigurationskarte „Schaltflächen"). Leer lassen heißt weiterhin: das Theme bestimmt den Radius — das bleibt der Normalfall. Nötig ist die Angabe nur, wenn ein Theme seinen Kaufen-Button über einen Selektor rundet, der auf unsere Buttons nicht zutrifft (etwa `button.btn-buy` in einer custom.css, während unsere Buttons `<a>`-Elemente sind). Der Wert wird inline gesetzt und schlägt damit jede Stylesheet-Regel; erlaubt sind einfache Längen wie `20px`, `0.5rem` oder `50rem`.

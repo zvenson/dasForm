@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Sven\DasForm\Subscriber;
 
+use Shopware\Core\Checkout\Cart\Price\Struct\CartPrice;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Struct\ArrayStruct;
+use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Shopware\Storefront\Page\Product\ProductPageLoadedEvent;
+use Sven\DasForm\Service\RateCalculator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -58,10 +61,16 @@ class ProductPageSubscriber implements EventSubscriberInterface
 
     private SystemConfigService $systemConfigService;
 
-    public function __construct(EntityRepository $productRepository, SystemConfigService $systemConfigService)
-    {
+    private RateCalculator $rateCalculator;
+
+    public function __construct(
+        EntityRepository $productRepository,
+        SystemConfigService $systemConfigService,
+        RateCalculator $rateCalculator
+    ) {
         $this->productRepository = $productRepository;
         $this->systemConfigService = $systemConfigService;
+        $this->rateCalculator = $rateCalculator;
     }
 
     public static function getSubscribedEvents(): array
@@ -84,6 +93,7 @@ class ProductPageSubscriber implements EventSubscriberInterface
             'inquiry' => $this->buildButton($fields, 'inquiry', $salesChannelId),
             'financing' => $this->buildButton($fields, 'financing', $salesChannelId),
             'radius' => $this->resolveRadius($salesChannelId),
+            'rates' => $this->resolveRates($product, $event->getSalesChannelContext()),
         ]));
     }
 
@@ -129,6 +139,46 @@ class ProductPageSubscriber implements EventSubscriberInterface
         return preg_match('/^(#[0-9a-fA-F]{3,8}|rgba?\([0-9,.\s%]+\)|[a-zA-Z]+)$/', $color) === 1
             ? $color
             : $fallback;
+    }
+
+    /**
+     * Monatsraten fuer die Ratenvorschau am Finanzierungs-Button.
+     *
+     * Gerechnet wird laut Spezifikation auf den **Nettopreis**. Je nach
+     * Verkaufskanal fuehrt Shopware den Einzelpreis brutto oder netto, deshalb
+     * wird der Nettobetrag ueber den Steuerzustand bestimmt. Die Umrechnung in
+     * Cent ist die einzige Stelle mit Gleitkomma — ab hier ist alles ganzzahlig.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function resolveRates(object $product, SalesChannelContext $context): array
+    {
+        if (!(bool) $this->systemConfigService->get('SvenDasForm.config.showRates', $context->getSalesChannelId())) {
+            return [];
+        }
+
+        $price = $product->getCalculatedPrice();
+        if ($price === null) {
+            return [];
+        }
+
+        $taxAmount = $price->getCalculatedTaxes()->getAmount();
+        $netEuro = $context->getTaxState() === CartPrice::TAX_STATE_GROSS
+            ? $price->getUnitPrice() - $taxAmount
+            : $price->getUnitPrice();
+
+        $taxRate = $price->getTaxRules()->first()?->getTaxRate() ?? 0.0;
+
+        $salesChannelId = $context->getSalesChannelId();
+        $min = $this->systemConfigService->get('SvenDasForm.config.minRatePrice', $salesChannelId);
+        $max = $this->systemConfigService->get('SvenDasForm.config.maxRatePrice', $salesChannelId);
+
+        return $this->rateCalculator->calculateAll(
+            (int) round($netEuro * 100),
+            (float) $taxRate,
+            $min === null ? RateCalculator::MIN_PRICE_CENTS : (int) round((float) $min * 100),
+            $max === null ? RateCalculator::MAX_PRICE_CENTS : (int) round((float) $max * 100)
+        );
     }
 
     /**

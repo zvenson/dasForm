@@ -6,9 +6,12 @@
            https://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <service id="Sven\DasForm\Service\RateCalculator"/>
+
         <service id="Sven\DasForm\Subscriber\ProductPageSubscriber">
             <argument type="service" id="product.repository"/>
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="Sven\DasForm\Service\RateCalculator"/>
             <tag name="kernel.event_subscriber"/>
         </service>
 

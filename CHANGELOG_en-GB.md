@@ -1,3 +1,11 @@
+# 2.5.0
+
+- **Rate preview as a tooltip**: hovering the financing button reveals the possible monthly rates of the three FLEX variants, each net and gross, plus purchase credit and earliest return month. Can be switched off via the new configuration card "Financing rates".
+- The tooltip is appended to `<body>` by the storefront plugin and placed with `position: fixed` — the same technique as the price tooltips in SvenDasMiet. Positioned absolutely inside the buy widget it would be clipped by an ancestor with `overflow: hidden`.
+- The price range of the preview is configurable (default 300 € to 30,000 € net). For testing with cheap articles the minimum price can be set to 0.
+- The calculation follows the provider's specification to the cent: integer cents throughout, `amort` as an integer fraction instead of a floating point value, commercial rounding (half a cent upwards), and VAT applied to the already rounded rate. Verified against an independent implementation across the entire range of 300 € to 30,000 € in single cent steps: no deviation. For comparison, the same calculation in `double` deviates by one cent between 7,425 and 15,469 times depending on the variant.
+- The calculation is based on the **net price**; if the sales channel carries gross prices, the net amount is derived from the tax state. No rate is shown outside 300 € to 30,000 € net.
+
 # 2.4.4
 
 - New setting **"Corner radius of the buttons"** (configuration card "Buttons"). Leaving it empty still means the theme decides the radius, which stays the normal case. It is only needed when a theme rounds its buy button through a selector that does not match our buttons (e.g. `button.btn-buy` in a custom.css, while our buttons are `<a>` elements). The value is applied inline and therefore beats any stylesheet rule; plain lengths such as `20px`, `0.5rem` or `50rem` are accepted.

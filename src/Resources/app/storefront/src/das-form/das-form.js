@@ -31,6 +31,65 @@ export default class DasFormContactInject extends Plugin {
 
         // Cover the case where the form is already present at init time.
         this._tryInject();
+
+        this._initRates();
+    }
+
+    /**
+     * Rate preview. The tooltip is moved to <body> and positioned with
+     * `position: fixed`, so no ancestor with `overflow: hidden` can clip it —
+     * inside the buy widget that is a real risk.
+     */
+    _initRates() {
+        this._tooltip = this.el.querySelector('[data-dasform-rates]');
+        this._tooltipTrigger = this.el.querySelector('.dasform-btn-wrap--rates .dasform-btn');
+
+        if (!this._tooltip || !this._tooltipTrigger) {
+            return;
+        }
+
+        document.body.appendChild(this._tooltip);
+
+        const show = () => this._showTooltip();
+        const hide = () => this._hideTooltip();
+
+        this._tooltipTrigger.addEventListener('mouseenter', show);
+        this._tooltipTrigger.addEventListener('focus', show);
+        this._tooltipTrigger.addEventListener('mouseleave', hide);
+        this._tooltipTrigger.addEventListener('blur', hide);
+
+        window.addEventListener('scroll', hide, { passive: true });
+        window.addEventListener('resize', hide, { passive: true });
+    }
+
+    _showTooltip() {
+        const rect = this._tooltipTrigger.getBoundingClientRect();
+
+        // Display first, otherwise offsetWidth/offsetHeight are still 0.
+        this._tooltip.classList.add('is-visible');
+
+        const margin = 12;
+        // `clientWidth` statt `innerWidth`: letzteres zaehlt die Scrollleiste mit,
+        // wodurch der Tooltip auf schmalen Bildschirmen rechts angeschnitten wird.
+        const viewport = document.documentElement.clientWidth;
+        const width = this._tooltip.offsetWidth;
+
+        // Ueber dem Button zentrieren statt linksbuendig: der Finanzierungs-Button
+        // sitzt rechts aussen, linksbuendig klebte der Tooltip am Fensterrand.
+        // Der Klammerwert greift erst, wenn er sonst herauslaufen wuerde.
+        const centered = rect.left + rect.width / 2 - width / 2;
+        const left = Math.round(
+            Math.max(margin, Math.min(centered, viewport - width - margin))
+        );
+        const above = rect.top - this._tooltip.offsetHeight - margin;
+
+        this._tooltip.style.left = `${left}px`;
+        // Flip below the button when there is not enough room above.
+        this._tooltip.style.top = `${above < margin ? rect.bottom + margin : above}px`;
+    }
+
+    _hideTooltip() {
+        this._tooltip.classList.remove('is-visible');
     }
 
     _readButton(button) {
