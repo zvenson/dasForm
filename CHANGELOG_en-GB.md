@@ -1,3 +1,9 @@
+# 2.5.1
+
+- On touch devices the tooltip is **off**; instead a compact line sits directly below both buttons: "Finanzieren ab X € – Details auf Anfrage" showing the cheapest of the three variants. There is no hovering there, so the tooltip was unreachable anyway.
+- Switching uses `(hover: none)` rather than screen width — a touch laptop with a mouse keeps the tooltip, while a wide tablet gets the line. The switch is a pure media query; the storefront plugin does not touch the tooltip on touch devices at all.
+- The amount in the compact line follows the sales channel's price display: if the shop shows gross prices, the gross amount is used — otherwise a net rate would sit directly below a gross price.
+
 # 2.5.0
 
 - **Rate preview as a tooltip**: hovering the financing button reveals the possible monthly rates of the three FLEX variants, each net and gross, plus purchase credit and earliest return month. Can be switched off via the new configuration card "Financing rates".

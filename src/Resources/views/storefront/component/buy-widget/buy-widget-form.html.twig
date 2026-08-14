@@ -14,6 +14,7 @@
             {% set dasformButtons = [] %}
             {% set dasformRadius = dasformConfig ? dasformConfig.radius : '' %}
             {% set dasformRates = dasformConfig ? dasformConfig.rates : [] %}
+            {% set dasformCheapest = dasformConfig ? dasformConfig.cheapest : [] %}
 
             {% if dasformMaster and dasformConfig %}
                 {% if dasformConfig.inquiry and dasformConfig.inquiry.active %}
@@ -104,6 +105,15 @@
                         {% endif %}
                         </div>
                     {% endfor %}
+
+                    {% if dasformCheapest %}
+                        {# Kompakte Zeile fuer Touchgeraete. Sichtbarkeit steuert allein
+                           die Media-Query `(hover: none)` — ohne JavaScript, damit auf
+                           dem Handy garantiert die Zeile und nie der Tooltip erscheint. #}
+                        <div class="dasform-rates-compact">
+                            Finanzieren ab {{ dasformCheapest.display|currency }} &ndash; Details auf Anfrage
+                        </div>
+                    {% endif %}
                 </div>
             {% endif %}
         {% endblock %}

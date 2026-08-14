@@ -89,11 +89,14 @@ class ProductPageSubscriber implements EventSubscriberInterface
         $fields = $product->getTranslation('customFields') ?? $product->getCustomFields() ?? [];
         $fields = $this->mergeParentFields($fields, $product->getParentId(), $event->getContext());
 
+        $rates = $this->resolveRates($product, $event->getSalesChannelContext());
+
         $page->addExtension(self::EXTENSION_NAME, new ArrayStruct([
             'inquiry' => $this->buildButton($fields, 'inquiry', $salesChannelId),
             'financing' => $this->buildButton($fields, 'financing', $salesChannelId),
             'radius' => $this->resolveRadius($salesChannelId),
-            'rates' => $this->resolveRates($product, $event->getSalesChannelContext()),
+            'rates' => $rates,
+            'cheapest' => $this->cheapestRate($rates, $event->getSalesChannelContext()),
         ]));
     }
 
@@ -179,6 +182,40 @@ class ProductPageSubscriber implements EventSubscriberInterface
             $min === null ? RateCalculator::MIN_PRICE_CENTS : (int) round((float) $min * 100),
             $max === null ? RateCalculator::MAX_PRICE_CENTS : (int) round((float) $max * 100)
         );
+    }
+
+    /**
+     * Guenstigste Variante fuer die kompakte Anzeige auf Touchgeraeten.
+     *
+     * Der Betrag folgt der Preisdarstellung des Verkaufskanals: zeigt der Shop
+     * Bruttopreise, steht auch hier der Bruttobetrag — sonst staende direkt
+     * unter einem Bruttopreis eine Nettorate.
+     *
+     * @param array<int, array<string, mixed>> $rates
+     *
+     * Leeres Array statt null: `isset()` liefert bei null false, wodurch Twig
+     * den Zugriff auf die Extension als fehlenden Schluessel behandeln wuerde.
+     *
+     * @return array<string, mixed>
+     */
+    private function cheapestRate(array $rates, SalesChannelContext $context): array
+    {
+        if ($rates === []) {
+            return [];
+        }
+
+        $cheapest = $rates[0];
+        foreach ($rates as $rate) {
+            if ($rate['net'] < $cheapest['net']) {
+                $cheapest = $rate;
+            }
+        }
+
+        $cheapest['display'] = $context->getTaxState() === CartPrice::TAX_STATE_GROSS
+            ? $cheapest['gross']
+            : $cheapest['net'];
+
+        return $cheapest;
     }
 
     /**

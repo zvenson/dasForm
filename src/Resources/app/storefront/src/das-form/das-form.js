@@ -48,6 +48,13 @@ export default class DasFormContactInject extends Plugin {
             return;
         }
 
+        // Ohne Hover (Touch) gaebe es keinen Weg, den Tooltip zu oeffnen. Dort
+        // uebernimmt die kompakte Zeile unter den Buttons, die rein per
+        // Media-Query eingeblendet wird — hier ist dann nichts zu tun.
+        if (window.matchMedia('(hover: none)').matches) {
+            return;
+        }
+
         document.body.appendChild(this._tooltip);
 
         const show = () => this._showTooltip();

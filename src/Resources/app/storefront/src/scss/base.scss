@@ -17,8 +17,11 @@
     margin-top: 10px;
 
     // Untereinander auf Mobilgeraeten, ab dem Medium-Breakpoint nebeneinander.
+    // `wrap`, damit die statische Ratenanzeige auf Touchgeraeten eine eigene
+    // Zeile unter beiden Buttons bekommt.
     @include media-breakpoint-up(md) {
         flex-direction: row;
+        flex-wrap: wrap;
     }
 }
 
@@ -153,4 +156,32 @@ a.dasform-btn {
     margin-top: 8px;
     font-size: 11px;
     opacity: 0.6;
+}
+
+// Kompakte Zeile unter beiden Buttons — die Touch-Variante des Tooltips.
+// Standardmaessig aus; eingeblendet wird sie allein durch die Media-Query
+// weiter unten, also ohne JavaScript.
+.dasform-rates-compact {
+    display: none;
+    flex: 0 0 100%;
+    width: 100%;
+    margin-top: -2px;
+    font-size: 13px;
+    line-height: 1.35;
+    opacity: 0.8;
+}
+
+// Geraete ohne Hover: Tooltip aus, kompakte Zeile an. Bewusst `(hover: none)`
+// statt einer Breitenabfrage — ein Touch-Notebook mit Maus behaelt den Tooltip,
+// ein breites Tablet bekommt die Zeile.
+@media (hover: none) {
+    // Doppelt gesichert: das Storefront-Plugin ruehrt den Tooltip hier gar nicht
+    // erst an, und selbst wenn, bliebe er unsichtbar.
+    .dasform-rates {
+        display: none !important;
+    }
+
+    .dasform-rates-compact {
+        display: block;
+    }
 }

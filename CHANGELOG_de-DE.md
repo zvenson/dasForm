@@ -1,3 +1,9 @@
+# 2.5.1
+
+- Auf Touchgeräten ist der Tooltip **aus**; stattdessen steht direkt unter beiden Buttons eine kompakte Zeile: „Finanzieren ab X € – Details auf Anfrage" mit der günstigsten der drei Varianten. Dort gibt es kein Überfahren, der Tooltip war damit ohnehin unerreichbar.
+- Umgeschaltet wird über `(hover: none)`, nicht über die Bildschirmbreite — ein Touch-Notebook mit Maus behält also den Tooltip, ein breites Tablet bekommt die Zeile. Die Umschaltung ist eine reine Media-Query; das Storefront-Plugin rührt den Tooltip auf Touchgeräten gar nicht erst an.
+- Der Betrag in der kompakten Zeile folgt der Preisdarstellung des Verkaufskanals: Zeigt der Shop Bruttopreise, steht dort der Bruttobetrag — sonst stünde direkt unter einem Bruttopreis eine Nettorate.
+
 # 2.5.0
 
 - **Ratenvorschau als Tooltip**: Beim Überfahren des Finanzierungs-Buttons erscheinen die möglichen Monatsraten der drei FLEX-Varianten, jeweils netto und brutto, dazu Kaufanrechnung und frühester Rückgabemonat. Abschaltbar über die neue Konfigurationskarte „Finanzierungsraten".
