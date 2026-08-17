@@ -176,11 +176,14 @@ class ProductPageSubscriber implements EventSubscriberInterface
         $min = $this->systemConfigService->get('SvenDasForm.config.minRatePrice', $salesChannelId);
         $max = $this->systemConfigService->get('SvenDasForm.config.maxRatePrice', $salesChannelId);
 
+        $variantsJson = $this->systemConfigService->get('SvenDasForm.config.variantsJson', $salesChannelId);
+
         return $this->rateCalculator->calculateAll(
             (int) round($netEuro * 100),
             (float) $taxRate,
             $min === null ? RateCalculator::MIN_PRICE_CENTS : (int) round((float) $min * 100),
-            $max === null ? RateCalculator::MAX_PRICE_CENTS : (int) round((float) $max * 100)
+            $max === null ? RateCalculator::MAX_PRICE_CENTS : (int) round((float) $max * 100),
+            $this->rateCalculator->parseVariants(is_string($variantsJson) ? $variantsJson : null)
         );
     }
 

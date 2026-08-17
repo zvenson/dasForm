@@ -84,6 +84,13 @@ Ihr Team</defaultValue>
 			<helpText>Shows the possible monthly rates (net and gross) when hovering the button. Calculated to the cent according to the provider's specification, based on the net price. No rate is shown outside 300 € to 30,000 € net.</helpText>
 			<defaultValue>1</defaultValue>
 		</input-field>
+		<component name="sw-textarea-field">
+			<name>variantsJson</name>
+			<label>Finanzierungsregeln (JSON)</label>
+			<label lang="en-GB">Financing rules (JSON)</label>
+			<helpText>Varianten als JSON-Array. "amort" bitte als Zeichenkette in Anführungszeichen angeben, damit exakt gerechnet wird (max. 6 Nachkommastellen); alternativ "p" und "q" als Bruch direkt. "credit" (Kaufanrechnung in Prozent) und "returnFrom" (frühester Rückgabemonat) sind optional und werden nur angezeigt — weglassen blendet die Zeile aus. Leer lassen für Standard: [{"key":"rent","label":"FLEX-Rent","amort":"0.7","credit":70,"returnFrom":9},{"key":"finance","label":"FLEX-Finance","amort":"0.42","credit":80,"returnFrom":14},{"key":"lease","label":"FLEX-Lease","amort":"0.35","credit":50,"returnFrom":20}]</helpText>
+			<helpText lang="en-GB">Variants as a JSON array. Provide "amort" as a quoted string so the calculation stays exact (6 decimals max); alternatively give "p" and "q" as a fraction directly. "credit" (purchase credit in percent) and "returnFrom" (earliest return month) are optional and display only — omitting them hides that line. Leave empty for the built-in defaults.</helpText>
+		</component>
 		<input-field type="float">
 			<name>minRatePrice</name>
 			<label lang="de-DE">Mindestpreis für die Ratenvorschau (netto)</label>

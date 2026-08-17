@@ -4,6 +4,16 @@ This Shopware 6 plugin adds a "Product Inquiry" button beneath the Add to Cart b
 When clicked, it opens a modal window containing a contact form that allows customers to ask questions about the product.
 The subject and message fields in the form are automatically pre-filled with the product name to save your customers time and encourage interaction.
 
+✨ What's new in 2.6
+- **Financing rules maintainable in the backend**: a new field "Financing rules (JSON)" in the configuration card "Financing rates" holds the variants, their labels, `amort`, purchase credit and return month — no code change needed when the provider's figures change.
+- `amort` is read as a string and decomposed into an integer fraction purely textually (`"0.42"` → 42/100), so the exact integer arithmetic is never undone by a float. Malformed JSON falls back to the built-in defaults and logs the cause instead of breaking the product page.
+
+✨ What's new in 2.5
+- **Rate preview** on the financing button: hovering reveals the possible monthly rates of the three FLEX variants, net and gross, plus purchase credit and earliest return month. Switch it off in the configuration card "Financing rates".
+- Calculated to the cent in integer cents (no floating point), based on the net price, within a configurable price range (default 300 € to 30,000 € net).
+- On touch devices the tooltip is replaced by a compact line below the buttons ("Finanzieren ab X € …"), since there is nothing to hover there. The switch is `(hover: none)`, not screen width.
+- New setting **"Corner radius of the buttons"** for themes that round their buy button through a selector our buttons do not match.
+
 ✨ What's new in 2.4
 - **Global activation** per button in the plugin config — switch it on once and the button appears on every product, no per-product tick needed. With the switch off, the per-product custom field decides (as in 2.0).
 - Second button **"Finanzierungsanfrage"** next to the product inquiry, with its own per-product switch, button label and subject — and optionally its own recipient address.

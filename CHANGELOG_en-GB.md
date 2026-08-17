@@ -1,3 +1,10 @@
+# 2.6.0
+
+- **Financing rules maintainable in the backend**: new field "Financing rules (JSON)" in the configuration card "Financing rates". Variants, labels, `amort`, purchase credit and return month can be changed without touching the plugin — necessary because the provider's figures come without warranty and may change.
+- `amort` is expected as a string and decomposed into the integer fraction P/Q **purely textually** (`"0.42"` → 42/100), never via `floatval`. Otherwise exactly the imprecision the integer arithmetic avoids would come back. Alternatively `p` and `q` can be given directly. Six decimals maximum, which keeps the numerator around 6 × 10¹² and well within 64 bit.
+- Malformed JSON does not empty the product page: the built-in defaults apply and the cause is written to the PHP log.
+- `credit` and `returnFrom` are optional. Removing them from the JSON hides the additional line in the tooltip, leaving only variant and rate — sensible as long as those two figures are unconfirmed by the provider.
+
 # 2.5.1
 
 - On touch devices the tooltip is **off**; instead a compact line sits directly below both buttons: "Finanzieren ab X € – Details auf Anfrage" showing the cheapest of the three variants. There is no hovering there, so the tooltip was unreachable anyway.

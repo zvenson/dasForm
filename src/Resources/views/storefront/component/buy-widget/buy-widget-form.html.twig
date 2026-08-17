@@ -94,9 +94,16 @@
                                             {{ dasformRate.net|currency }}
                                             <span class="dasform-rates__gross">/ {{ dasformRate.gross|currency }} brutto</span>
                                         </span>
-                                        <span class="dasform-rates__meta">
-                                            {{ dasformRate.credit }} % Kaufanrechnung, Rückgabe ab Monat {{ dasformRate.returnFrom }}
-                                        </span>
+                                        {# Nur zeigen, was in den Finanzierungsregeln auch hinterlegt
+                                           ist: wer credit/returnFrom aus dem JSON entfernt, blendet
+                                           die Zeile damit aus. #}
+                                        {% if dasformRate.credit or dasformRate.returnFrom %}
+                                            <span class="dasform-rates__meta">
+                                                {%- if dasformRate.credit %}{{ dasformRate.credit }} % Kaufanrechnung{% endif -%}
+                                                {%- if dasformRate.credit and dasformRate.returnFrom %}, {% endif -%}
+                                                {%- if dasformRate.returnFrom %}Rückgabe ab Monat {{ dasformRate.returnFrom }}{% endif -%}
+                                            </span>
+                                        {% endif %}
                                     </div>
                                 {% endfor %}
 

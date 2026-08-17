@@ -1,3 +1,10 @@
+# 2.6.0
+
+- **Finanzierungsregeln im Backend pflegbar**: Neues Feld „Finanzierungsregeln (JSON)" in der Konfigurationskarte „Finanzierungsraten". Varianten, Bezeichnungen, `amort`, Kaufanrechnung und Rückgabemonat lassen sich damit ändern, ohne das Plugin anzufassen — nötig, weil die Angaben des Anbieters ohne Gewähr sind und sich ändern können.
+- `amort` wird als Zeichenkette erwartet und **rein textuell** in den ganzzahligen Bruch P/Q zerlegt (`"0.42"` → 42/100), niemals über `floatval`. Sonst käme genau die Ungenauigkeit zurück, die die Ganzzahlarithmetik vermeidet. Alternativ lassen sich `p` und `q` direkt angeben. Maximal sechs Nachkommastellen; der Zähler bleibt damit bei rund 6 × 10¹² und klar im 64-Bit-Bereich.
+- Fehlerhaftes JSON räumt die Produktseite nicht leer: Es gelten dann die eingebauten Vorgabewerte, die Ursache landet im PHP-Log.
+- `credit` und `returnFrom` sind optional. Wer sie aus dem JSON entfernt, blendet die Zusatzzeile im Tooltip aus und zeigt nur noch Variante und Rate — sinnvoll, solange diese beiden Angaben nicht vom Anbieter bestätigt sind.
+
 # 2.5.1
 
 - Auf Touchgeräten ist der Tooltip **aus**; stattdessen steht direkt unter beiden Buttons eine kompakte Zeile: „Finanzieren ab X € – Details auf Anfrage" mit der günstigsten der drei Varianten. Dort gibt es kein Überfahren, der Tooltip war damit ohnehin unerreichbar.
